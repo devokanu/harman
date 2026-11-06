@@ -41,7 +41,7 @@ Cevaplarıma göre: değişecek dosyalar (`ai/*.js`, `.env.example`, `katil.html
 9. Minecraft (kapsamda ise): Paper (Mineflayer'ın desteklediği sürüm; şu an 1.8–1.21.11 belirtiliyor, npm'den teyit et), EULA'yı BEN onaylarım, `server.properties`: `enable-rcon=true`, `rcon.port=25575`, parola `.env`'den, yerel bot için `online-mode=false` (riski: sunucu dışa açılırsa kimliksiz giriş; yalnız 127.0.0.1), `-Xmx2G`. `rcon-client` + Mineflayer botu; `kopru.js` içindeki `like` dalına eşik → komut; güvenli yarıçap, bekleme süresi, olay başına üst sınır, `CustomName` ile izleyici adı; `/list` ile doğrula.
 10. Olay veriyolu: öncelik kuyruğu (yorum 1 · LLM 2 · hediye/olay 3 · Galaxy 4), sessizlik 700–800 ms, en çok 6 bekleyen yorum; TNT anında önbellekten kısa korku sesi, patlamadan sonra adla tepki.
 11. OBS / LIVE Studio: dikey tuval 1080×1920; `katil.html?sahne=sunucu` tarayıcı kaynağı (ses OBS'den), yayıncı kamerası üstte/yanda; sahne kurulumunu obs-websocket-js ile (sor) ya da elle README'ye.
-12. Başlat/durdur: `basla` (server.js + ai/kopru.js + tarayıcı), `durdur` (kayıt alarak kapat), sağlık kontrolü (8787 dinliyor mu, anahtarlar dolu/boş, TEST_MODU).
+12. Başlat/durdur ve acil durdurma: `basla` (server.js + ai/kopru.js + tarayıcı), `durdur` (kayıt alarak kapat), sağlık kontrolü (8787 dinliyor mu, anahtarlar dolu/boş, TEST_MODU). Acil durdurma: prototipte `p`/`m` tuşları, köprüde `kayitlar/DUR` dosyası; harcama tavanı `LLM_OTURUM_SINIRI` ve `ELEVEN_OTURUM_SINIRI` dolu olsun.
 13. Uçtan uca test: sahte "Selam" → filtre → beyin → ses → balon; sahte 20 beğeni → TNT. Tablo: adım, süre, geçti/kaldı.
 
 ## 4. Teslim

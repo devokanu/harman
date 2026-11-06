@@ -18,7 +18,7 @@
 <body>
 <canvas id="c" width="1080" height="1920"></canvas>
 <div id="menu"></div>
-<div id="help">Katıl prototipi · <b>?sahne=halka&amp;demo=1</b> · <b>[</b> <b>]</b> sahne değiştir · <b>k</b> yorum · <b>l</b> 20 beğeni · <b>g</b> hediye · <b>s</b> büyük hediye · <b>t</b> TTS · <b>r</b> sıfırla · <b>h</b> gizle<br>Gerçek bağlantı: <b>node server.js &lt;kullanici_adi&gt;</b> → ws://localhost:8787</div>
+<div id="help">Katıl prototipi · <b>?sahne=halka&amp;demo=1</b> · <b>[</b> <b>]</b> sahne değiştir · <b>k</b> yorum · <b>l</b> 20 beğeni · <b>g</b> hediye · <b>s</b> büyük hediye · <b>t</b> TTS · <b>r</b> sıfırla · <b>p</b> duraklat · <b>m</b> sustur · <b>h</b> gizle<br>Gerçek bağlantı: <b>node server.js &lt;kullanici_adi&gt;</b> → ws://localhost:8787</div>
 <script>
 /* =========================================================================
    KATIL — tek olay sözleşmesi, 20 değiştirilebilir sahne.
@@ -447,7 +447,7 @@ function setScene(id){ if(!SC[id]) id="halka"; S.sceneId=id; S.scene=SC[id]; S.r
 const menu=document.getElementById("menu"); ORDER.forEach(id=>{ const b=document.createElement("button"); b.textContent=SC[id].ad; b.dataset.id=id; b.onclick=()=>setScene(id); menu.appendChild(b); });
 
 /* ---------- olay işleme ---------- */
-function onEvent(e){ const sc=S.scene; const id=e.user||("u"+Math.random()); const nick=clean(e.nick||id); if(isBanned(nick)) return;
+function onEvent(e){ if(S.paused&&e.type!=="viewers") return; /* p tuşu: acil durdurma */ const sc=S.scene; const id=e.user||("u"+Math.random()); const nick=clean(e.nick||id); if(isBanned(nick)) return;
   let m=S.members.get(id);
   const join=()=>{ if(m) return m; m={id,nick,color:col(id),outfit:Math.random()<.5?"f":"m",team:null,photo:null,joined:performance.now()}; S.members.set(id,m); S.order.push(id); addPoints(id,CONFIG.points.join); loadPhoto(m,e.avatar); if(sc.join) sc.join(m,e); pushEvent("katıldı",nick,"#fff"); speak(nick+" katıldı"); return m; };
   switch(e.type){
@@ -478,6 +478,7 @@ function draw(now){ S.tick++; const rate=updateTempo(now); const sc=S.scene;
   panel(400,40,280,44,.5); txt(sc.ad,540,70,22,"#ffe082","center","bold");
   S.events.forEach((ev,i)=>{ const age=(now-ev.t)/1000; if(age>8) return; ctx.globalAlpha=Math.max(0,1-age/8); panel(60,1560+i*50,960,42,.65); txt(ev.key+(ev.names.filter(Boolean).length?"  ·  "+ev.names.filter(Boolean).join(" · "):""),80,1589+i*50,22,ev.color,"left","bold"); ctx.globalAlpha=1; });
   panel(120,1830,840,60,.7); txt("💬 "+sc.cagri,540,1869,24,"#ffd54f","center","bold");
+  if(S.paused){ panel(240,880,600,120,.85); txt("⏸ DURAKLATILDI",540,935,40,"#ff8a65","center","bold"); txt("p ile devam · olaylar yok sayılıyor",540,975,22,"#fff","center"); }
   S.fx=S.fx.filter(f=>now-f.t<1500); S.fx.forEach(f=>{ const a=(now-f.t)/1500; for(let i=0;i<16;i++){ ctx.fillStyle=`hsl(${i*22} 90% 60%)`; ctx.globalAlpha=1-a; ctx.beginPath(); ctx.arc(f.x+Math.cos(i)*a*160,f.y+Math.sin(i)*a*160+a*a*120,6,0,6.28); ctx.fill(); } ctx.globalAlpha=1; });
   requestAnimationFrame(draw);
 }
@@ -497,6 +498,8 @@ addEventListener("keydown",e=>{ const ids=[...S.members.keys()]; const pick=()=>
   if(e.key==="g") onEvent({type:"gift",user:pick(),giftName:"Perfume",coins:20});
   if(e.key==="s") onEvent({type:"gift",user:pick(),giftName:"Galaxy",coins:1000});
   if(e.key==="t") CONFIG.tts=!CONFIG.tts; if(e.key==="r"){ S.lead.clear(); saveLead(); }
+  if(e.key==="p"){ S.paused=!S.paused; if(S.paused&&window.speechSynthesis) speechSynthesis.cancel(); if(S.robi){ S.robi.kuyruk=[]; S.robi.konusma=null; } }
+  if(e.key==="m"){ CONFIG.tts=false; if(window.speechSynthesis) speechSynthesis.cancel(); if(S.robi){ S.robi.kuyruk=[]; S.robi.konusma=null; } }
   if(e.key==="h") document.getElementById("help").hidden=!document.getElementById("help").hidden;
   if(e.key==="]"||e.key==="["){ const i=ORDER.indexOf(S.sceneId); setScene(ORDER[(i+(e.key==="]"?1:ORDER.length-1))%ORDER.length]); } });
 function fit(){ const s=Math.min(innerWidth/W,innerHeight/H); cv.style.transform=`translate(-50%,-50%) scale(${s})`; } addEventListener("resize",fit); fit();

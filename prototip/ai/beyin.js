@@ -33,8 +33,12 @@ const SAGLAYICI = {
   }
 };
 const HAZIR = { selam: { duygu: "mutlu", enerji: 2, soz: "Selam {ad}! Hoş geldin, yerin hazır." }, genel: { duygu: "sakin", enerji: 1, soz: "{ad}, bunu not ettim. Devam et." } };
+let cagriSayaci = 0; // harcama tavanı: LLM_OTURUM_SINIRI aşılınca hazır cevap
+export const harcama = () => ({ cagri: cagriSayaci, sinir: +(env.LLM_OTURUM_SINIRI || 1500) });
 export async function dusun({ nick, metin, hafiza, tur = "yorum" }) {
   const t0 = Date.now();
+  if (env.TEST_MODU !== "1" && cagriSayaci >= +(env.LLM_OTURUM_SINIRI || 1500)) { const h = HAZIR.genel; return { ...h, soz: h.soz.replace("{ad}", nick), saglayici: "sinir", sure: 0 }; }
+  if (env.TEST_MODU !== "1") cagriSayaci++;
   if (env.TEST_MODU === "1") { const h = /selam|merhaba|slm/i.test(metin) ? HAZIR.selam : HAZIR.genel; return { ...h, soz: h.soz.replace("{ad}", nick), saglayici: "test", sure: Date.now() - t0 }; }
   const sys = sistemIstemi(hafiza); const kullanici = `${tur}: ${nick}: ${metin}`;
   const sira = [["gemini", env.GEMINI_API_KEY], ["groq", env.GROQ_API_KEY], ["openrouter", env.OPENROUTER_API_KEY && env.OPENROUTER_MODEL]].filter(([, k]) => k).map(([n]) => n);

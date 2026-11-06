@@ -24,6 +24,10 @@ Prototip: `katil.html?sahne=sunucu` (köprüye bağlanır) veya `?sahne=sunucu&d
 ## Anahtar kaynakları (resmî)
 Gemini: ai.google.dev → "Get API key" · Groq: console.groq.com/keys · OpenRouter: openrouter.ai/keys · ElevenLabs: elevenlabs.io → Profile → API keys. Ücretsiz kotalar sık değişir; projenin kendi kota ekranı geçerlidir.
 
+## Acil durdurma ve harcama tavanı
+- Prototipte `p` duraklatır (olaylar yok sayılır, kuyruk boşalır), `m` sesi keser. Köprüde `touch kayitlar/DUR` konuşmayı durdurur, dosyayı silince devam eder.
+- `LLM_OTURUM_SINIRI` (varsayılan 1500) aşılınca beyin hazır cevaba düşer; `ELEVEN_OTURUM_SINIRI` sesi keser. Kaynak fikir: Sayıyla, 6 Kas 2026.
+
 ## Sınırlar
 - TikTok LIVE kuralı: yaratıcı varlığı olmadan otomatik içerik para kazanmaya uygun değil. Robi yardımcı sunucudur; yayıncı kamerada kalır.
 - tiktok-live-connector resmî değil (AGPL-3.0), yayın açıkken denenir; kırılabilir.

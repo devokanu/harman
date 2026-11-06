@@ -1,7 +1,8 @@
 // Köprü: server.js'in ws://localhost:8787 yayınını dinler, yorum → filtre → beyin → ses → prototipe {type:"say"} yollar.
 // Çalıştır: node --env-file=.env ai/kopru.js     (Node 20.6+; .env yoksa TEST_MODU varsayılan 1)
 import WebSocket from "ws"; import { filtrele, hizSiniri } from "./filtre.js"; import { dusun, anahtarDurumu } from "./beyin.js"; import { seslendir } from "./ses.js";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+const DUR = new URL("../kayitlar/DUR", import.meta.url); // acil durdurma: bu dosya varsa köprü konuşma göndermez (touch kayitlar/DUR)
 process.env.TEST_MODU ??= "1";
 const HAF = new URL("../kayitlar/izleyiciler.json", import.meta.url); mkdirSync(new URL("../kayitlar/", import.meta.url), { recursive: true });
 let hafiza = {}; try { hafiza = JSON.parse(readFileSync(HAF, "utf8")); } catch {}
@@ -9,6 +10,7 @@ const kaydet = () => writeFileSync(HAF, JSON.stringify(hafiza, null, 1));
 console.log("anahtarlar:", anahtarDurumu());
 const kuyruk = []; let mesgul = false, sonKonusma = 0; const SESSIZLIK = 800, KUYRUK_MAX = 6;
 async function isle() {
+  if (existsSync(DUR)) { kuyruk.length = 0; return; }
   if (mesgul || !kuyruk.length || Date.now() - sonKonusma < SESSIZLIK) return; mesgul = true;
   kuyruk.sort((a, b) => b.oncelik - a.oncelik); const q = kuyruk.shift();
   try { const cevap = await dusun(q); const ses = await seslendir(cevap).catch(e => ({ yol: null, kaynak: "hata:" + e.message }));
