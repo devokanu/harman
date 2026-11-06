@@ -1,0 +1,55 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>Versus Arena bar overlay</title>
+<style>
+/* OBS Browser Source: 1080x1920, şeffaf arka plan. Olaylar: WebSocket (ws://localhost:8787) veya ?demo=1 ile simülasyon. */
+html,body{margin:0;background:transparent;width:1080px;height:1920px;overflow:hidden;font-family:"IBM Plex Sans",system-ui,sans-serif;color:#fff}
+.sb{position:absolute;left:50%;top:160px;transform:translateX(-50%);background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.2);border-radius:28px;padding:16px 36px;text-align:center;font:800 40px system-ui}
+.sb small{display:block;font:500 20px ui-monospace,monospace;opacity:.8;letter-spacing:.1em;margin-top:4px}
+.bar{position:absolute;left:44px;right:44px;top:1330px;height:60px;border-radius:30px;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.3);overflow:hidden}
+.bar .a{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#d62828,#ff7b7b);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar .b{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(270deg,#1d3557,#7aa2e3);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar .m{position:absolute;top:-10px;bottom:-10px;width:6px;background:#fff;box-shadow:0 0 24px #fff;transition:left .6s cubic-bezier(.2,.8,.2,1)}
+.pct{position:absolute;left:56px;right:56px;top:1400px;display:flex;justify-content:space-between;font:800 36px system-ui}
+.pct small{font:500 20px ui-monospace,monospace;opacity:.85;margin:0 12px}
+.mode{position:absolute;left:50%;top:1272px;transform:translateX(-50%);font:600 24px ui-monospace,monospace;letter-spacing:.2em;color:#ffd166;text-shadow:0 0 20px rgba(255,209,102,.9);opacity:0;transition:opacity .4s}
+.mode.on{opacity:1}
+.mvp{position:absolute;left:30px;right:30px;top:1470px;display:flex;gap:14px}
+.mvp .u{flex:1;background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.16);border-radius:22px;padding:12px 16px;font-size:24px;display:flex;align-items:center;gap:12px}
+.mvp .u b{font:600 22px ui-monospace,monospace;margin-left:auto}
+.toast{position:absolute;left:30px;top:1210px;background:linear-gradient(90deg,rgba(255,45,85,.95),rgba(255,159,10,0));border-radius:999px;padding:12px 40px 12px 20px;font-size:26px;opacity:0;transform:translateY(10px);transition:all .3s}
+.toast.on{opacity:1;transform:none}
+.flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 60%,rgba(255,255,255,.7),transparent 60%)}
+.flash.on{animation:fl .9s ease-out}
+@keyframes fl{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+.win{position:absolute;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55);font:800 120px system-ui;text-align:center;letter-spacing:-.02em}
+.win.on{display:grid}
+</style></head><body>
+<div class="sb" id="sb">DERBİ ARENASI<small id="hedef">TUR 1 · HEDEF 50.000 JETON</small></div>
+<div class="mode" id="mode">ÇEKİŞME MODU</div>
+<div class="toast" id="toast"></div>
+<div class="bar"><div class="a" id="ba"></div><div class="b" id="bb"></div><div class="m" id="bm"></div></div>
+<div class="pct"><span><span id="pa">50%</span><small>SARI-KIRMIZI</small></span><span><small>SARI-LACİVERT</small><span id="pb">50%</span></span></div>
+<div class="mvp" id="mvp"></div>
+<div class="flash" id="flash"></div>
+<div class="win" id="win">ZAFER</div>
+<script>
+// Durum: takım toplamları jeton (diamond_count × adet). Oran = A/(A+B). Hiçbir hediye matematiği jeton değerinden farklı etkilemez.
+const S={a:0,b:0,hedef:50000,tur:1,users:{}};
+const KADEME=v=>v>=29999?5:v>=7000?4:v>=500?3:v>=30?2:1;
+function render(){ const t=S.a+S.b, p=t?S.a/t:.5; document.getElementById('ba').style.width=(p*100)+'%'; document.getElementById('bb').style.width=((1-p)*100)+'%'; document.getElementById('bm').style.left=`calc(${p*100}% - 3px)`;
+ document.getElementById('pa').textContent=Math.round(p*100)+'%'; document.getElementById('pb').textContent=Math.round((1-p)*100)+'%';
+ const m=document.getElementById('mode'); if(t>0&&p>=.45&&p<=.55){m.textContent='ÇEKİŞME MODU';m.classList.add('on');} else if(p>=.7||p<=.3){m.textContent='BASKI MODU';m.classList.add('on');} else m.classList.remove('on');
+ const top=Object.entries(S.users).sort((x,y)=>y[1]-x[1]).slice(0,3); document.getElementById('mvp').innerHTML=top.map(([u,v],i)=>`<div class="u">#${i+1} ${u}<b>${v.toLocaleString('tr-TR')}</b></div>`).join('');
+ document.getElementById('hedef').textContent=`TUR ${S.tur} · HEDEF ${S.hedef.toLocaleString('tr-TR')} JETON · ${t.toLocaleString('tr-TR')}`;
+ if(t>=S.hedef){ const w=document.getElementById('win'); w.textContent='ZAFER: '+(p>=.5?'SARI-KIRMIZI':'SARI-LACİVERT'); w.classList.add('on'); setTimeout(()=>{w.classList.remove('on'); S.a=S.b=0; S.tur++; S.hedef=Math.round(S.hedef*1.2); render();},9000); } }
+function gift(ev){ // ev: {user, team:'a'|'b', diamond, count, repeatEnd, giftType}
+ if(ev.giftType===1 && ev.repeatEnd!==1) return; // seri hediyede yalnız seri bitince say
+ const val=ev.diamond*(ev.count||1); S[ev.team]+=val; S.users[ev.user]=(S.users[ev.user]||0)+val;
+ const t=document.getElementById('toast'); t.textContent=`${ev.user} · ${ev.giftName||'hediye'} × ${ev.count||1} · +${val.toLocaleString('tr-TR')}`; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2500);
+ if(KADEME(val)>=3){ const f=document.getElementById('flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); }
+ render(); }
+// WebSocket (Node servisi: tiktok-live-connector → {type:'gift', ...})
+try{ const ws=new WebSocket('ws://localhost:8787'); ws.onmessage=e=>{ const d=JSON.parse(e.data); if(d.type==='gift') gift(d); }; }catch(e){}
+// Demo: ?demo=1
+if(new URLSearchParams(location.search).get('demo')){ const G=[['Gül',1,1],['Parmak Kalp',5,1],['Donut',30,1],['Konfeti',100,1],['Para Tabancası',500,1],['Galaxy',1000,1],['Gül',1,10]]; const U=['aslan_34','deniz.k','mert1905','ece','oğuz','selin']; setInterval(()=>{ const g=G[Math.floor(Math.random()*G.length)]; gift({user:U[Math.floor(Math.random()*U.length)],team:Math.random()<.55?'a':'b',giftName:g[0],diamond:g[1],count:g[2],repeatEnd:1,giftType:g[2]>1?1:0}); },700); }
+render();
+</script></body></html>

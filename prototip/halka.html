@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Halka — yorumla katıl prototipi</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  html,body{margin:0;height:100%;background:#0b0f14;overflow:hidden;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  #c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#1d6b3a}
+  #help{position:fixed;left:8px;bottom:8px;color:#cfd8dc;font:12px/1.4 monospace;background:rgba(0,0,0,.55);padding:6px 8px;border-radius:6px;max-width:46ch}
+  #help b{color:#ffd54f}
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div id="help">Halka prototipi · <b>?demo=1</b> sahte olay üretir · gerçek bağlantı: <b>node server.js &lt;tiktok_kullanici_adi&gt;</b> (ws://localhost:8787)<br>
+Tuşlar: <b>k</b> yorum/katıl · <b>l</b> 20 beğeni · <b>g</b> hediye · <b>s</b> Sıkıştır · <b>t</b> TTS aç/kapa · <b>r</b> sıralamayı sıfırla · <b>h</b> bu kutuyu gizle</div>
+<script>
+/* ---------- 1. AYARLAR: hediye → eylem tablosu, komutlar, puanlar ---------- */
+const CONFIG = {
+  wsUrl: "ws://localhost:8787",
+  joinWords: ["katıl","katil","join","halka"],   // bu kelimeler kesin katılır
+  anyCommentJoins: true,                         // her yorum katılsın mı
+  outfitWords: { "kız":"f", "kadın":"f", "erkek":"m", "adam":"m" },
+  teamWords:   { "kırmızı":"#e53935", "mavi":"#1e88e5", "sarı":"#fdd835", "yeşil":"#43a047" },
+  // Hediye adları TikTok olay akışındaki giftName ile eşleşir; jeton bilgisi gösterim içindir.
+  gifts: {
+    "Rose":        { coins:1,    action:"mendil",   label:"Mendil salladı" },
+    "Finger Heart":{ coins:5,    action:"altin",    label:"Altın işleme" },
+    "Perfume":     { coins:20,   action:"horonbasi",label:"Horon başı oldu" },
+    "Doughnut":    { coins:30,   action:"kemence",  label:"Kemençeyi aldı" },
+    "Hand Hearts": { coins:100,  action:"fisek",    label:"Havai fişek" },
+    "Galaxy":      { coins:1000, action:"sikistir", label:"SIKIŞTIR!" }
+  },
+  points: { join:5, comment:1, likePer:10, coin:1 },   // likePer: her 10 beğeni = 1 puan
+  tempo: { window:10, phases:[["Yavaş",0,70],["Orta",10,95],["Hızlı",40,125],["Sıkıştır",90,150]], decayPerSec:1.5 },
+  sikistirSeconds: 12,
+  maxPerRing:[18,28,40,56,72],
+  banned: ["örnek_küfür"],                       // isim ve yorum filtresi; kendi listeni koy
+  tts:false
+};
+
+/* ---------- 2. DURUM ---------- */
+const cv=document.getElementById("c"), ctx=cv.getContext("2d");
+const S={ members:new Map(), order:[], likes:[], phase:0, bpm:70, sikistirUntil:0, events:[], fx:[], viewers:0, horonBasi:null, kemenceci:null, lead:new Map(), tick:0, lastT:performance.now() };
+try{ const saved=JSON.parse(localStorage.getItem("halka_lead")||"[]"); saved.forEach(([k,v])=>S.lead.set(k,v)); }catch(e){}
+function saveLead(){ try{ localStorage.setItem("halka_lead", JSON.stringify([...S.lead.entries()].slice(0,500))); }catch(e){} }
+
+/* ---------- 3. YARDIMCILAR ---------- */
+const clean=s=>String(s||"").replace(/https?:\/\/\S+/g,"").replace(/[^\p{L}\p{N} _.\-]/gu,"").trim().slice(0,14)||"izleyici";
+const isBanned=s=>CONFIG.banned.some(w=>w && s.toLowerCase().includes(w));
+const col=(seed)=>{ let h=0; for(const ch of seed) h=(h*31+ch.charCodeAt(0))&0xffff; return `hsl(${h%360} 65% 55%)`; };
+function addPoints(id,n){ S.lead.set(id,(S.lead.get(id)||0)+n); if(S.tick%60===0) saveLead(); }
+function pushEvent(text,color){ // aynı metin art arda gelirse birleştir: "Sıkıştır! · Ayşe · Mert"
+  const last=S.events[0];
+  if(last && last.key===text.key){ last.names.push(text.name); last.t=performance.now(); if(last.names.length>4) last.names.splice(0,last.names.length-4); return; }
+  S.events.unshift({key:text.key,names:[text.name],color,t:performance.now()}); if(S.events.length>6) S.events.pop();
+}
+function speak(t){ if(!CONFIG.tts||!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(t); u.lang="tr-TR"; u.rate=1.05; speechSynthesis.speak(u); }
+
+/* ---------- 4. OLAY İŞLEME (tek giriş noktası) ---------- */
+function onEvent(e){
+  const id=e.user||e.uniqueId||("u"+Math.random()); const nick=clean(e.nick||e.nickname||id);
+  if(isBanned(nick)) return;
+  let m=S.members.get(id);
+  const join=()=>{ if(m) return m; m={id,nick,color:col(id),outfit:Math.random()<.5?"f":"m",team:null,photo:null,joined:performance.now(),bob:Math.random()*6.28}; S.members.set(id,m); S.order.push(id); addPoints(id,CONFIG.points.join); loadPhoto(m,e.avatar||e.profilePictureUrl); pushEvent({key:"katıldı",name:nick},"#ffffff"); speak(nick+" katıldı"); return m; };
+  switch(e.type){
+    case "comment": case "chat": {
+      const txt=String(e.text||"").toLowerCase().trim(); if(isBanned(txt)) return;
+      const words=txt.split(/\s+/);
+      const wantsJoin=CONFIG.anyCommentJoins || words.some(w=>CONFIG.joinWords.includes(w));
+      if(wantsJoin) join(); if(!m) return;
+      for(const w of words){ if(CONFIG.outfitWords[w]) m.outfit=CONFIG.outfitWords[w]; if(CONFIG.teamWords[w]) m.team=CONFIG.teamWords[w]; }
+      const il=words.find(w=>/^(0?[1-9]|[1-7][0-9]|8[01])$/.test(w)); if(il) m.il=il.padStart(2,"0");   // plaka kodu → rozet
+      m.bubble={text:String(e.text||"").slice(0,28),t:performance.now()}; addPoints(id,CONFIG.points.comment); break; }
+    case "like": { const n=+e.count||1; S.likes.push([performance.now(),n]); if(m) addPoints(id,Math.floor(n/CONFIG.points.likePer)); else join(); break; }
+    case "join": case "member": join(); break;
+    case "gift": {
+      join(); const g=CONFIG.gifts[e.giftName]||{coins:+e.coins||1,action:"mendil",label:e.giftName||"Hediye"};
+      const coins=(+e.coins||g.coins)*(+e.repeat||1); addPoints(id,coins*CONFIG.points.coin);
+      pushEvent({key:g.label,name:nick},"#ffd54f"); speak(nick+" "+g.label);
+      if(g.action==="horonbasi") S.horonBasi=id; if(g.action==="kemence") S.kemenceci=id; if(g.action==="altin") m.gold=true;
+      if(g.action==="fisek"||coins>=100) S.fx.push({kind:"fisek",t:performance.now(),x:200+Math.random()*680,y:300+Math.random()*500});
+      if(g.action==="sikistir"||coins>=500) S.sikistirUntil=performance.now()+CONFIG.sikistirSeconds*1000;
+      m.flash=performance.now(); break; }
+    case "viewers": S.viewers=+e.count||S.viewers; break;
+  }
+}
+function loadPhoto(m,url){ if(!url) return; const img=new Image(); img.crossOrigin="anonymous"; img.onload=()=>m.photo=img; img.onerror=()=>{}; img.src=url; } // CORS engellerse baş harf kalır
+
+/* ---------- 5. TEMPO: son 10 sn'deki beğeni sayısı → evre ---------- */
+function updateTempo(now){
+  S.likes=S.likes.filter(([t])=>now-t<CONFIG.tempo.window*1000);
+  const rate=S.likes.reduce((a,[,n])=>a+n,0);
+  let p=0; CONFIG.tempo.phases.forEach((ph,i)=>{ if(rate>=ph[1]) p=i; });
+  if(now<S.sikistirUntil) p=CONFIG.tempo.phases.length-1;
+  if(p!==S.phase){ S.phase=p; pushEvent({key:"HOPPA! "+CONFIG.tempo.phases[p][0],name:""},"#80deea"); }
+  S.bpm+= (CONFIG.tempo.phases[p][2]-S.bpm)*0.05; return rate;
+}
+
+/* ---------- 6. ÇİZİM ---------- */
+function ring(i){ let acc=0; for(let r=0;r<CONFIG.maxPerRing.length;r++){ if(i<acc+CONFIG.maxPerRing[r]) return [r,i-acc,CONFIG.maxPerRing[r]]; acc+=CONFIG.maxPerRing[r]; } return [CONFIG.maxPerRing.length-1,i%72,72]; }
+function draw(now){
+  const dt=(now-S.lastT)/1000; S.lastT=now; S.tick++;
+  const rate=updateTempo(now); const sik=now<S.sikistirUntil;
+  // zemin
+  const g=ctx.createLinearGradient(0,0,0,1920); g.addColorStop(0,sik?"#2b1b3d":"#0f3b5c"); g.addColorStop(.35,"#1d6b3a"); g.addColorStop(1,"#14502b"); ctx.fillStyle=g; ctx.fillRect(0,0,1080,1920);
+  for(let i=0;i<14;i++){ ctx.fillStyle="#ffe082"; ctx.globalAlpha=.6+.4*Math.sin(now/300+i); ctx.beginPath(); ctx.arc(60+i*74,330+Math.sin(i)*14,6,0,6.28); ctx.fill(); } ctx.globalAlpha=1; // ışık zinciri
+  // halka merkezi
+  const cx=540, cy=1000, beat=Math.sin(now/1000*S.bpm/60*6.28);
+  ctx.font="64px serif"; ctx.textAlign="center"; ctx.fillText("🥁",cx-70,cy+20+beat*6); ctx.fillText("🎺",cx+70,cy+20-beat*6);
+  if(S.kemenceci && S.members.get(S.kemenceci)){ ctx.font="bold 26px sans-serif"; ctx.fillStyle="#fff"; ctx.fillText("🎻 "+S.members.get(S.kemenceci).nick,cx,cy+90); }
+  // üyeler
+  const n=S.order.length;
+  S.order.forEach((id,i)=>{
+    const m=S.members.get(id); const [r,k,cap]=ring(i); const ang=(k/cap)*6.283+now/ (sik?6000:14000)*(r%2?1:-1);
+    const R=(220+r*120)*(sik?0.78:1); const x=cx+Math.cos(ang)*R*1.0, y=cy+Math.sin(ang)*R*0.62;
+    const hop=Math.abs(Math.sin(now/1000*S.bpm/60*3.14+m.bob))*(sik?22:12);
+    // gövde
+    ctx.fillStyle=m.team||(m.outfit==="f"?"#c2185b":"#283593"); ctx.beginPath(); ctx.roundRect(x-18,y-10-hop,36,54,10); ctx.fill();
+    if(m.gold){ ctx.strokeStyle="#ffd54f"; ctx.lineWidth=3; ctx.stroke(); }
+    // baş (fotoğraf veya baş harf)
+    ctx.save(); ctx.beginPath(); ctx.arc(x,y-30-hop,22,0,6.28); ctx.closePath(); ctx.clip();
+    if(m.photo) ctx.drawImage(m.photo,x-22,y-52-hop,44,44); else { ctx.fillStyle=m.color; ctx.fillRect(x-22,y-52-hop,44,44); ctx.fillStyle="#fff"; ctx.font="bold 24px sans-serif"; ctx.fillText(m.nick[0].toUpperCase(),x,y-22-hop); }
+    ctx.restore();
+    if(S.horonBasi===id){ ctx.font="30px serif"; ctx.fillText("👑",x,y-62-hop); }
+    if(m.flash && now-m.flash<800){ ctx.strokeStyle="#ffd54f"; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(x,y-20-hop,40+(now-m.flash)/20,0,6.28); ctx.stroke(); }
+    // isim + il rozeti
+    ctx.font="bold 18px sans-serif"; ctx.fillStyle="rgba(0,0,0,.55)"; const w=ctx.measureText(m.nick).width+16+(m.il?36:0); ctx.fillRect(x-w/2,y+48,w,24); ctx.fillStyle="#fff"; ctx.fillText(m.nick+(m.il?"  "+m.il:""),x,y+66);
+    if(m.bubble && now-m.bubble.t<4000){ ctx.font="16px sans-serif"; const bw=ctx.measureText(m.bubble.text).width+16; ctx.fillStyle="#fff"; ctx.beginPath(); ctx.roundRect(x-bw/2,y-100-hop,bw,26,8); ctx.fill(); ctx.fillStyle="#222"; ctx.fillText(m.bubble.text,x,y-81-hop); }
+  });
+  // sıralama (sol üst)
+  const top=[...S.lead.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+  ctx.fillStyle="rgba(0,0,0,.6)"; ctx.beginPath(); ctx.roundRect(24,40,360,60+top.length*42,16); ctx.fill();
+  ctx.textAlign="left"; ctx.fillStyle="#ffd54f"; ctx.font="bold 26px sans-serif"; ctx.fillText("🏆 Halka ustaları",44,82);
+  top.forEach(([id,p],i)=>{ const m=S.members.get(id); ctx.fillStyle="#fff"; ctx.font="22px sans-serif"; ctx.fillText(`${i+1}  ${m?m.nick:id}`,44,124+i*42); ctx.textAlign="right"; ctx.fillStyle="#ffd54f"; ctx.fillText(String(p),364,124+i*42); ctx.textAlign="left"; });
+  // tempo göstergesi (sağ üst)
+  const ph=CONFIG.tempo.phases[S.phase]; ctx.fillStyle="rgba(0,0,0,.6)"; ctx.beginPath(); ctx.arc(960,120,80,0,6.28); ctx.fill();
+  ctx.strokeStyle=sik?"#ff5252":"#80deea"; ctx.lineWidth=12; ctx.beginPath(); ctx.arc(960,120,66,-1.57,-1.57+6.28*Math.min(1,rate/90)); ctx.stroke();
+  ctx.textAlign="center"; ctx.fillStyle="#fff"; ctx.font="bold 24px sans-serif"; ctx.fillText(ph[0],960,116); ctx.font="18px sans-serif"; ctx.fillText(`${Math.round(S.bpm)} bpm`,960,144);
+  ctx.fillStyle="rgba(0,0,0,.6)"; ctx.beginPath(); ctx.roundRect(880,220,160,44,22); ctx.fill(); ctx.fillStyle="#fff"; ctx.font="20px sans-serif"; ctx.fillText(`👥 ${S.viewers||n}  🕺 ${n}`,960,250);
+  // olay şeridi (alt)
+  S.events.forEach((ev,i)=>{ const age=(now-ev.t)/1000; if(age>8) return; ctx.globalAlpha=Math.max(0,1-age/8); ctx.fillStyle="rgba(0,0,0,.65)"; ctx.beginPath(); ctx.roundRect(60,1420+i*58,960,48,14); ctx.fill(); ctx.fillStyle=ev.color; ctx.font="bold 24px sans-serif"; ctx.textAlign="left"; ctx.fillText(ev.key+(ev.names.filter(Boolean).length?"  ·  "+ev.names.filter(Boolean).join(" · "):""),80,1453+i*58); ctx.globalAlpha=1; });
+  // çağrı bandı
+  ctx.fillStyle="rgba(0,0,0,.7)"; ctx.beginPath(); ctx.roundRect(190,1790,700,70,35); ctx.fill(); ctx.fillStyle="#ffd54f"; ctx.font="bold 30px sans-serif"; ctx.textAlign="center"; ctx.fillText("💬 Yorum yaz, halkaya katıl · plakanı yaz, rozetini al",540,1836);
+  // havai fişek
+  S.fx=S.fx.filter(f=>now-f.t<1500); S.fx.forEach(f=>{ const a=(now-f.t)/1500; for(let i=0;i<16;i++){ ctx.fillStyle=`hsl(${i*22} 90% 60%)`; ctx.globalAlpha=1-a; ctx.beginPath(); ctx.arc(f.x+Math.cos(i)*a*160,f.y+Math.sin(i)*a*160+a*a*120,6,0,6.28); ctx.fill(); } ctx.globalAlpha=1; });
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+window.onerror=(m,src,l)=>{ ctx.fillStyle="#fff"; ctx.font="26px monospace"; ctx.textAlign="left"; ctx.fillText("HATA: "+m+" @"+l,20,120); };
+
+/* ---------- 7. GİRİŞ: WebSocket veya demo ---------- */
+const params=new URLSearchParams(location.search);
+if(params.get("seed")){ // anında dolu sahne (ekran görüntüsü/prova için)
+  const sn=["Ayşe","Mert","Elif","Hasan","Zeynep","Ecem","Yusuf","Derya","Kerem","Sude","Baran","Nehir","Ali","Melis","Can","Ravza","Emre","Şirin","Ozan","Lale","Umut","İrem","Berk","Nisa"];
+  const st=["katıl","kız 61","erkek 34","mavi","kırmızı 06","gir gir","hoppa 16","Horon!","35","slm 27"];
+  for(let i=0;i<+params.get("seed");i++){ const u=sn[i%sn.length]+(i>23?i:""); onEvent({type:"comment",user:u,nick:u,text:st[i%st.length]}); }
+  ["Perfume","Doughnut","Finger Heart","Rose","Hand Hearts"].forEach((g,i)=>onEvent({type:"gift",user:sn[i],giftName:g,coins:CONFIG.gifts[g].coins}));
+  for(let i=0;i<6;i++) onEvent({type:"like",user:sn[i],count:12});
+  onEvent({type:"viewers",count:128}); S.events=S.events.slice(0,3); document.getElementById("help").hidden=true;
+}
+if(params.get("demo")){
+  const names=["Ayşe","Mert","Elif","Hasan","Zeynep","Ecem","Yusuf","Derya","Kerem","Sude","Baran","Nehir","Ali","Melis","Can","Ravza","Emre","Şirin"];
+  const texts=["katıl","selam","kız","erkek","61","34","06","gir gir","hoppa","mavi","kırmızı","nasıl katılıyız","Horon!","slm"];
+  setInterval(()=>{ const u=names[Math.floor(Math.random()*names.length)]+Math.floor(Math.random()*90); onEvent({type:"comment",user:u,nick:u,text:texts[Math.floor(Math.random()*texts.length)]}); }, 700);
+  setInterval(()=>{ const ids=[...S.members.keys()]; if(!ids.length) return; onEvent({type:"like",user:ids[Math.floor(Math.random()*ids.length)],count:Math.ceil(Math.random()*15)}); }, 500);
+  setInterval(()=>{ const ids=[...S.members.keys()]; if(!ids.length) return; const gn=Object.keys(CONFIG.gifts); const g=gn[Math.floor(Math.random()*Math.random()*gn.length)]; onEvent({type:"gift",user:ids[Math.floor(Math.random()*ids.length)],giftName:g,coins:CONFIG.gifts[g].coins,repeat:1}); }, 4000);
+  setInterval(()=>onEvent({type:"viewers",count:40+Math.floor(Math.random()*60)}),3000);
+} else {
+  (function connect(){ let ws; try{ ws=new WebSocket(CONFIG.wsUrl);}catch(e){ return setTimeout(connect,3000); }
+    ws.onmessage=ev=>{ try{ onEvent(JSON.parse(ev.data)); }catch(e){} };
+    ws.onclose=()=>setTimeout(connect,3000); })();
+}
+/* ---------- 8. Klavye (prova) ---------- */
+addEventListener("keydown",e=>{ const ids=[...S.members.keys()]; const pick=()=>ids[Math.floor(Math.random()*ids.length)]||"test";
+  if(e.key==="k") onEvent({type:"comment",user:"test"+Date.now()%100,nick:"Test"+Date.now()%100,text:"katıl 61"});
+  if(e.key==="l") onEvent({type:"like",user:pick(),count:20});
+  if(e.key==="g") onEvent({type:"gift",user:pick(),giftName:"Perfume",coins:20});
+  if(e.key==="s") onEvent({type:"gift",user:pick(),giftName:"Galaxy",coins:1000});
+  if(e.key==="t") CONFIG.tts=!CONFIG.tts;
+  if(e.key==="r"){ S.lead.clear(); saveLead(); }
+  if(e.key==="h") document.getElementById("help").hidden=!document.getElementById("help").hidden; });
+/* ---------- 9. Ölçek: 1080×1920 sahneyi pencereye sığdır ---------- */
+function fit(){ const s=Math.min(innerWidth/1080,innerHeight/1920); cv.style.transform=`translate(-50%,-50%) scale(${s})`; } addEventListener("resize",fit); fit();
+</script>
+</body>
+</html>

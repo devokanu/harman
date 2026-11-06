@@ -1,0 +1,1 @@
+{ "name": "katil-ai", "private": true, "type": "module", "scripts": { "test": "node ai/test.js", "kopru": "node --env-file=.env ai/kopru.js" }, "dependencies": { "ws": "^8" } }

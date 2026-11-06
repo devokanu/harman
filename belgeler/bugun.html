@@ -1,0 +1,318 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}body{margin:0}</style></head><body><title>Bugün Yayın Aç</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Düzen: tek sütun, büyük numaralı duraklar (bir günün saat çizelgesi gibi), her durakta "ne yapacaksın / ne göreceksin / takılırsan". Atlas renk sistemi + sahne ışığı sarısı. */
+:root{
+  --bg:#f3f1ec; --bg2:#ffffff; --bg3:#e9e5dc; --fg:#171a1f; --fg2:#575d66; --fg3:#8b9098; --line:#dcd7cc;
+  --accent:#b65c0a; --accent2:#f2b25a; --accent-ink:#ffffff; --accentbg:#fbead6; --stage:#13161c; --stage-fg:#f6f3ea;
+  --ok:#1f7a4d; --okbg:#e2f3ea; --warn:#a96b0a; --warnbg:#fbefd8; --bad:#b3261e; --badbg:#fbe3e1; --info:#1f5fa8; --infobg:#e1ecf9;
+  --fd:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif; --fb:"IBM Plex Sans",system-ui,-apple-system,sans-serif; --fm:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --shadow:0 1px 2px rgba(23,26,31,.06),0 12px 32px -18px rgba(23,26,31,.3); color-scheme:light;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --bg:#0e1116; --bg2:#161a21; --bg3:#1f242d; --fg:#eceae4; --fg2:#aab0b9; --fg3:#7c838d; --line:#2a303a; --accent:#f2b25a; --accent2:#b65c0a; --accent-ink:#1a1206; --accentbg:#2a2214; --stage:#07090c; --stage-fg:#f6f3ea; --ok:#62d394; --okbg:#15301f; --warn:#f2b25a; --warnbg:#332812; --bad:#ff7b72; --badbg:#3a1b19; --info:#7db6ff; --infobg:#17283d; --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -18px rgba(0,0,0,.8); color-scheme:dark; } }
+:root[data-theme="dark"]{ --bg:#0e1116; --bg2:#161a21; --bg3:#1f242d; --fg:#eceae4; --fg2:#aab0b9; --fg3:#7c838d; --line:#2a303a; --accent:#f2b25a; --accent2:#b65c0a; --accent-ink:#1a1206; --accentbg:#2a2214; --stage:#07090c; --stage-fg:#f6f3ea; --ok:#62d394; --okbg:#15301f; --warn:#f2b25a; --warnbg:#332812; --bad:#ff7b72; --badbg:#3a1b19; --info:#7db6ff; --infobg:#17283d; --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -18px rgba(0,0,0,.8); color-scheme:dark; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 var(--fb);-webkit-font-smoothing:antialiased}
+a{color:var(--info)}
+.wrap{max-width:980px;margin:0 auto;padding-block:0 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* sahne gibi koyu açılış */
+.stage{background:var(--stage);color:var(--stage-fg);border-radius:0 0 28px 28px;padding:48px 36px 40px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.stage::before{content:"";position:absolute;inset:-40% -20% auto -20%;height:120%;background:radial-gradient(ellipse at 50% 0%,rgba(242,178,90,.35),transparent 60%);pointer-events:none}
+.stage .eyebrow{font-family:var(--fm);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2)}
+h1{font-family:var(--fd);font-weight:800;font-size:clamp(34px,6vw,64px);line-height:1;margin:12px 0 16px;letter-spacing:-.025em;text-wrap:balance;position:relative}
+.stage p{max-width:62ch;font-size:18px;color:#d8d4ca;margin:0 0 18px;position:relative}
+.clock{display:flex;flex-wrap:wrap;gap:10px;position:relative}
+.clock span{font-family:var(--fm);font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);color:#f6f3ea;background:rgba(255,255,255,.06)}
+.clock span b{color:var(--accent2);font-weight:500}
+/* ihtiyaç listesi */
+.need{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:26px 0 8px}
+.need div{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-width:0}
+.need b{display:block;font-family:var(--fd);font-size:17px;margin-bottom:4px}
+.need span{font-size:14px;color:var(--fg2)}
+/* duraklar */
+.stop{display:grid;grid-template-columns:84px minmax(0,1fr);gap:18px;margin-top:34px}
+.stop .n{position:sticky;top:16px;align-self:start;width:72px;height:72px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 30px/72px var(--fd);text-align:center;box-shadow:var(--shadow)}
+.stop .n small{display:block;font:500 11px/1 var(--fm);margin-top:-26px;letter-spacing:.06em}
+.stop article{background:var(--bg2);border:1px solid var(--line);border-radius:22px;padding:24px 26px;box-shadow:var(--shadow);min-width:0}
+.stop h2{font-family:var(--fd);font-weight:800;font-size:clamp(22px,3vw,30px);margin:0 0 4px;letter-spacing:-.015em;text-wrap:balance}
+.stop .sure{font-family:var(--fm);font-size:12px;color:var(--fg3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.stop h3{font-family:var(--fd);font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin:18px 0 6px}
+ol.do{counter-reset:d;list-style:none;padding:0;margin:0}
+ol.do li{counter-increment:d;position:relative;padding:8px 0 8px 40px;border-bottom:1px dashed var(--line)}
+ol.do li:last-child{border-bottom:0}
+ol.do li::before{content:counter(d);position:absolute;left:0;top:9px;width:26px;height:26px;border-radius:8px;background:var(--bg3);color:var(--fg2);font:600 13px/26px var(--fm);text-align:center}
+.see{background:var(--bg3);border-radius:14px;padding:12px 16px;font-size:15px;color:var(--fg2)}
+.see b{color:var(--fg)}
+.fix{border-left:4px solid var(--warn);background:var(--warnbg);padding:10px 14px;border-radius:0 12px 12px 0;font-size:15px}
+.ok{border-left:4px solid var(--ok);background:var(--okbg);padding:10px 14px;border-radius:0 12px 12px 0;font-size:15px}
+.fig{margin:14px 0 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg3)}
+.fig img{display:block;width:100%;height:auto}
+.fig figcaption{font-size:12.5px;color:var(--fg2);padding:8px 12px;border-top:1px solid var(--line)}
+.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.two>*{min-width:0}
+.say{background:var(--stage);color:var(--stage-fg);border-radius:16px;padding:16px 18px;font-family:var(--fd);font-size:18px;line-height:1.45}
+.say small{display:block;font:500 11px/1.4 var(--fm);color:var(--accent2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.chip{display:inline-block;font-family:var(--fm);font-size:11px;padding:2px 8px;border-radius:999px;background:var(--infobg);color:var(--info);vertical-align:middle}
+.chip.oz{background:var(--warnbg);color:var(--warn)}.chip.resmi{background:var(--okbg);color:var(--ok)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th{text-align:left;font-family:var(--fd);background:var(--bg3);padding:8px 10px}
+td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+.timeline{display:grid;grid-template-columns:70px 1fr;gap:6px 14px;font-size:15px}
+.timeline b{font-family:var(--fm);font-weight:500;color:var(--accent)}
+.foot{margin-top:40px;color:var(--fg2);font-size:13.5px}
+.sema{width:100%;height:auto;display:block;margin:8px 0}
+.sema text{font-family:var(--fb);font-size:13px;fill:var(--fg)}.sema .box{fill:var(--bg3);stroke:var(--line)}.sema .acc{fill:var(--accentbg);stroke:var(--accent)}.sema .ar{stroke:var(--fg3);fill:none;stroke-width:1.5;marker-end:url(#ok2)}
+@media (max-width:640px){.stage{padding:34px 20px 30px;border-radius:0 0 20px 20px}.stop{grid-template-columns:52px 1fr;gap:12px}.stop .n{width:46px;height:46px;font-size:20px;line-height:46px}.stop .n small{display:none}.stop article{padding:18px 16px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<style data-tema="v2">
+/* Tema v2: daha büyük ölçek, renkli bölüm şeritleri, kategori renkleri, canlı içindekiler. Mevcut kuralların üstüne gelir. */
+:root{ --katil:#1f7a4d; --katilbg:#e2f3ea; --deney:#b65c0a; --deneybg:#fbead6; --versus:#b3261e; --versusbg:#fbe3e1; --karakter:#6a4c93; --karakterbg:#ece4f6; --fg2:#4d5560; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --katil:#62d394; --katilbg:#15301f; --deney:#f2b25a; --deneybg:#2a2214; --versus:#ff7b72; --versusbg:#3a1b19; --karakter:#c9a7ff; --karakterbg:#2a2140; --fg2:#bcc3cc; --fg3:#8e97a3; } }
+:root[data-theme="dark"]{ --katil:#62d394; --katilbg:#15301f; --deney:#f2b25a; --deneybg:#2a2214; --versus:#ff7b72; --versusbg:#3a1b19; --karakter:#c9a7ff; --karakterbg:#2a2140; --fg2:#bcc3cc; --fg3:#8e97a3; }
+body{font-size:17px;line-height:1.72}
+p,li,.q3 div,.glos div,.card p,.kv,.see,.callout,.say{font-size:17px}
+.kv{font-size:15.5px}.kv dt{font-size:12px}.card p{font-size:16px}
+.lead,.sub{font-size:19px;line-height:1.6}
+h1{font-size:clamp(36px,5vw,58px)}
+h2{font-size:clamp(28px,3.4vw,40px);margin:4px 0 10px}
+h3{font-size:23px;margin:36px 0 12px;padding-left:14px;border-left:5px solid var(--accent);line-height:1.2}
+h4{font-size:18px}
+section,.stop article{padding:36px 40px;border-radius:26px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+section::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+section:nth-of-type(even){background:color-mix(in srgb,var(--bg2) 94%,var(--accent) 6%)}
+.num{display:inline-block;background:var(--accent);color:var(--accent-ink);font:700 13px/1 var(--fm);padding:7px 11px;border-radius:8px;letter-spacing:.12em;margin-bottom:12px}
+/* kategori renkli bölümler (id ile) */
+#ne::before,#fikirler::before,#fikir::before,#surumler::before,#prototip::before,#b5::before,#b6::before,#b11::before{background:linear-gradient(180deg,var(--katil),var(--accent2))}
+#kural::before,#b13::before,#b15::before{background:linear-gradient(180deg,var(--versus),var(--accent2))}
+#nasil::before,#uygulama::before,#kod::before,#b3::before,#b4::before,#b12::before{background:linear-gradient(180deg,var(--karakter),var(--accent2))}
+#para::before,#pilot::before,#takvim::before,#b14::before,#b9::before{background:linear-gradient(180deg,var(--deney),var(--accent2))}
+#ne .num,#fikirler .num,#fikir .num,#surumler .num,#prototip .num,#b5 .num,#b6 .num,#b11 .num{background:var(--katil);color:#fff}
+#kural .num,#b13 .num,#b15 .num{background:var(--versus);color:#fff}
+#nasil .num,#uygulama .num,#kod .num,#b3 .num,#b4 .num,#b12 .num{background:var(--karakter);color:#fff}
+#para .num,#pilot .num,#takvim .num,#b14 .num,#b9 .num{background:var(--deney);color:#fff}
+/* tablolar */
+table{font-size:15.5px}
+th{font-size:13px;letter-spacing:.06em;text-transform:uppercase;background:var(--accentbg);color:var(--accent);padding:12px 14px;border-bottom:2px solid var(--accent)}
+td{padding:12px 14px;line-height:1.5}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--bg3) 55%,transparent)}
+td:first-child{font-weight:600}
+.tw{border-radius:16px;box-shadow:var(--shadow)}
+/* kartlar */
+.card{background:var(--bg2);border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
+.card h4{font-size:19px;margin-bottom:8px}
+.grid{gap:18px}
+.grid>.card:nth-child(4n+1){border-top-color:var(--katil)}.grid>.card:nth-child(4n+2){border-top-color:var(--deney)}.grid>.card:nth-child(4n+3){border-top-color:var(--karakter)}.grid>.card:nth-child(4n+4){border-top-color:var(--versus)}
+.q3 div,.glos div,.need div,.road div{background:var(--bg2);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px}
+.q3 b{font-size:12px;margin-bottom:6px}
+.glos b,.need b,.road b{font-size:18px}
+.kpi div{padding:16px 18px;border-radius:16px;box-shadow:var(--shadow);background:var(--bg2);border-top:5px solid var(--accent)}
+.kpi b{font-size:30px}.kpi span{font-size:14px}
+/* etiket ve rozetler */
+.tag{font-size:12px;padding:3px 10px;font-weight:600}
+.pill{font-size:13px;padding:3px 12px}
+.pill.tr{background:var(--versusbg);color:var(--versus)}.pill.gl{background:var(--infobg);color:var(--info)}.pill.bos{background:var(--katilbg);color:var(--katil)}.pill.dolu{background:var(--warnbg);color:var(--warn)}
+/* uyarı kutuları */
+.callout{padding:18px 22px;border-radius:16px;border-left-width:7px;box-shadow:var(--shadow)}
+.callout b:first-child{display:block;font-family:var(--fd);font-size:18px;margin-bottom:4px}
+.see{padding:14px 18px;border-radius:14px;border-left:5px solid var(--info);background:var(--infobg);color:var(--fg)}
+.fix{padding:14px 18px;border-radius:14px;font-size:16px}
+.ok{padding:14px 18px;border-radius:14px;font-size:16px}
+/* görseller */
+.fig{border-radius:18px;box-shadow:var(--shadow)}
+.fig figcaption{font-size:14.5px;padding:12px 16px;background:var(--bg2);color:var(--fg2);line-height:1.5}
+/* adımlar */
+ol.do>li{font-size:17px;padding:14px 0 14px 50px}
+ol.do>li::before{width:34px;height:34px;line-height:34px;font-size:15px;border-radius:10px;top:14px}
+ol.do li b.ek{font-size:17.5px}
+.steps li{font-size:17px;padding-left:46px;margin-bottom:14px}
+.steps li::before{width:32px;height:32px;line-height:32px;font-size:15px}
+.stop .n{background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:32px}
+.timeline{font-size:16.5px;gap:10px 16px}
+.ladder b{font-size:24px}.ladder span{font-size:13px}
+.say{font-size:18.5px;padding:18px 20px}
+pre{font-size:14px;line-height:1.6;padding:16px 18px;border-radius:14px}
+code{font-size:.9em}
+.small{font-size:14.5px}
+/* içindekiler */
+nav.toc{padding:18px 14px;font-size:15px;border-radius:18px;box-shadow:var(--shadow)}
+nav.toc b{font-size:12px;color:var(--accent);margin:12px 0 6px}
+nav.toc a{padding:7px 10px;font-size:14.5px;border-radius:10px;color:var(--fg2)}
+nav.toc a span{width:30px;font-size:12px;color:var(--fg3)}
+nav.toc a.on{background:var(--accentbg);color:var(--accent);font-weight:600}
+nav.toc a.on span{color:var(--accent)}
+nav.toc .home{font-size:16px}
+/* hub */
+.hub a{padding:22px 24px;border-top:6px solid var(--accent);border-radius:20px}
+.hub a:nth-child(4n+2){border-top-color:var(--katil)}.hub a:nth-child(4n+3){border-top-color:var(--deney)}.hub a:nth-child(4n+4){border-top-color:var(--karakter)}
+.hub b{font-size:21px}.hub span{font-size:15px}
+.stage p{font-size:18.5px}
+.stage .docs b{font-size:17px}.stage .docs span{font-size:14px}
+.docs a{padding:14px 16px}
+@media (max-width:900px){section,.stop article{padding:26px 20px}h3{font-size:21px}}
+
+</style>
+
+<div class="wrap">
+<header class="stage">
+<div class="eyebrow">Hiç yayın açmamış biri için · 6 Kasım 2026 · Mac veya Windows</div>
+<h1>Bugün ilk TikTok LIVE'ını aç, izleyicilerin ekranda balık olsun</h1>
+<p>Üç saatlik bir plan. Teknik bilgi gerekmiyor: TikTok'un kendi masaüstü programı, tarayıcıda çalışan ücretsiz bir oyun ve on cümlelik bir konuşma akışı. Her durakta ne yapacağını, ekranda ne göreceğini ve takılırsan ne olacağını yazıyor.</p>
+<div class="clock"><span><b>14:00</b> hesap ve izin</span><span><b>14:30</b> program kurulumu</span><span><b>15:10</b> oyunu bağla</span><span><b>15:40</b> prova</span><span><b>16:30</b> yayın</span><span><b>17:30</b> kapanış ve klip</span></div>
+</header>
+
+<div class="need">
+<div><b>TikTok hesabı</b><span>18 yaş ve üstü; LIVE açma izni olan hesap. Takipçi eşiği uygulamada görünür (yaygın eşik 1.000; ülkeye ve hesaba göre değişir).</span></div>
+<div><b>Bilgisayar</b><span>Mac (macOS 12 ve üstü) veya Windows 10/11. Kamera ve mikrofon dahili olanı yeter.</span></div>
+<div><b>Telefon</b><span>TikTok uygulaması açık; yorumları ve yayını izleyici gözüyle görmek için.</span></div>
+<div><b>Bir saat sessiz oda</b><span>Işık yüzüne gelsin; arkanda düz duvar; kulaklık olursa yankı olmaz.</span></div>
+</div>
+
+<div class="stop"><div class="n">1<small>14:00</small></div><article>
+<h2>LIVE açabildiğinden emin ol</h2><div class="sure">10 dakika · telefonda</div>
+<ol class="do">
+<li>TikTok'u aç, alttaki <b>+</b> düğmesine bas. Alt sekmelerde <b>LIVE</b> seçeneği görünüyorsa iznin var.</li>
+<li>Görünmüyorsa: yaşın 18 ve üstü olmalı, takipçi eşiği dolmalı. Eşik uygulamada yazar; TikTok'un resmî "LIVE erişimi" sayfası sayı vermez, "belirli sayıda takipçi" der. <span class="chip resmi">RESMÎ</span></li>
+<li>Profil adını ve fotoğrafını kontrol et: izleyiciler ekranda bu adı görecek.</li>
+<li>Bir arkadaşının hesabını ya da ikinci bir hesabı prova için hazırla; yayına yorum yazacak biri lazım.</li>
+</ol>
+<div class="see"><b>Ne göreceksin:</b> + menüsünde "LIVE" sekmesi ve "Yayına başla" düğmesi. Bugün telefondan değil bilgisayardan açacağız; bu sekme sadece iznin olduğunu gösterir.</div>
+<div class="fix" style="margin-top:10px"><b>Takılırsan:</b> LIVE sekmesi yoksa bugün yayın açılamaz. Yarına plan: takipçi eşiği için günde 2 kısa video, 1 Aralık pilotuna kadar hesabı büyüt. Bu rehberin kalanını yine kur; izin gelince hazır olursun.</div>
+</article></div>
+
+<div class="stop"><div class="n">2<small>14:30</small></div><article>
+<h2>TikTok LIVE Studio'yu indir ve giriş yap</h2><div class="sure">20 dakika · bilgisayarda</div>
+<p>LIVE Studio TikTok'un kendi masaüstü programı. Mac sürümü var (macOS 12 ve üstü) ve Windows sürümü var. OBS gibi ayrı bir yayın programına ve "yayın anahtarı" gibi kavramlara bugün gerek yok. <span class="chip resmi">RESMÎ, 6 Kas 2026</span></p>
+<ol class="do">
+<li>Tarayıcıda <b>tiktok.com/studio/download</b> adresine git. Mac'te "Download for Mac", Windows'ta "Download for Windows" düğmesini göreceksin.</li>
+<li>İndirilen dosyayı aç ve kur (Mac'te uygulamayı Uygulamalar klasörüne sürükle; Windows'ta kurulum sihirbazı).</li>
+<li>Programı aç, <b>TikTok hesabınla giriş yap</b> (QR kod ya da telefon doğrulaması).</li>
+<li>Mac ilk açılışta <b>kamera, mikrofon ve ekran kaydı</b> izni sorar; üçüne de izin ver. İzin vermezsen görüntü gelmez; sonradan Sistem Ayarları → Gizlilik ve Güvenlik'ten açılır.</li>
+<li>Sol üstte "Studio view" ve solda <b>Scenes / Sources</b> (Sahneler / Kaynaklar) panelini gör. Şimdilik dokunma.</li>
+</ol>
+<figure class="fig"><img src="img/5d0cc53b6095281aa192178468c8aad0.jpg" alt="TikTok LIVE Studio indirme sayfası: Download for Mac düğmesi, macOS 12.0 veya üstü"><figcaption>İndirme sayfası Mac'te böyle görünür; Windows bilgisayarda aynı sayfa Windows düğmesini gösterir.</figcaption></figure>
+<div class="fix" style="margin-top:10px"><b>Takılırsan:</b> Program "LIVE erişimin yok" derse 1. durağa dön. Mac'te "açılamıyor" uyarısı çıkarsa Sistem Ayarları → Gizlilik ve Güvenlik → "Yine de aç".</div>
+</article></div>
+
+<div class="stop"><div class="n">3<small>15:10</small></div><article>
+<h2>Ücretsiz oyunu bağla: izleyici "katıl" yazınca balık olur</h2><div class="sure">30 dakika · tarayıcıda</div>
+<p>Bugünkü oyun Rotvay'ın <b>Rotvaryum</b>'u: ücretsiz, kurulum yok, tarayıcıda çalışır, "TikTok LIVE Studio ile uyumlu". Yoruma "katıl" yazan izleyici kendi adı ve profil fotoğrafıyla okyanusa yavru balık olarak girer, yem yedikçe büyür, en büyük balık taç takar. <span class="chip oz">satıcı beyanı</span></p>
+<ol class="do">
+<li><b>rotvay.com</b> adresine git, <b>Üye Ol</b> ile e-postayla hesap aç. Parola olarak TikTok parolanı kullanma; TikTok parolanı isteyen hiçbir siteye verme.</li>
+<li>Oyunlar → <b>Rotvaryum</b> → <b>Oyunu başlat</b>. Sayfa TikTok <b>kullanıcı adını</b> (@ ile başlayan) ister; yaz ve bağlan. Oyun yayın açıkken yorumları bu addan okur.</li>
+<li>Oyun sayfasını <b>ayrı bir tarayıcı penceresinde</b> tam ekran yap. Dikey (9:16) görünümü seç; telefon ekranı dikeydir.</li>
+<li>LIVE Studio'ya dön → <b>Sources → Add</b> → <b>Window capture</b> (Pencere yakalama) → oyunun açık olduğu tarayıcı penceresini seç. Önizlemede okyanus görünmeli.</li>
+<li>Aynı menüden <b>Camera</b> ekle; kamera kutusunu küçültüp sağ alt köşeye al. İzleyici hem seni hem balıkları görsün.</li>
+<li><b>Microphone</b> kaynağını kontrol et: konuşunca ses çubuğu oynuyor mu.</li>
+</ol>
+<div class="figrow"><figure class="fig"><img src="img/0bff64b15c74a4cb8bd59b691ab89a1f.jpg" alt="UGC · masa kurulumu" loading="lazy"><figcaption><b>UGC · masa kurulumu.</b> Dizüstü + telefon tripodu + ring ışık; yüz yok <span class="tag gozlem">AI ÜRETİMİ</span></figcaption></figure><figure class="fig"><img src="img/2c62180580fa2ce6ed34aa19c60d85f9.jpg" alt="UGC · ev stüdyosu köşesi" loading="lazy"><figcaption><b>UGC · ev stüdyosu köşesi.</b> Mikrofon kolu, gimbal, duvarda 'Yayın öncesi kontrol' listesi <span class="tag gozlem">AI ÜRETİMİ</span></figcaption></figure></div>
+<figure class="fig"><img src="img/705f404cc6415e8109035354901d5231.jpg" alt="Rotvay Rotvaryum ürün sayfası: ücretsiz, kurulum gerektirmez, tarayıcıda çalışır"><figcaption>Rotvaryum sayfası, 6 Kas 2026: "Yoruma 'katıl' yazan izleyici oyuna girer", "TikTok LIVE Studio ile uyumlu".</figcaption></figure>
+<svg class="sema" viewBox="0 0 900 150" role="img" aria-label="Üç pencere: TikTok LIVE Studio, tarayıcıda oyun, telefonda yorumlar"><defs><marker id="ok2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--fg3)"/></marker></defs>
+<rect class="box" x="10" y="25" width="250" height="100" rx="14"/><text x="135" y="60" text-anchor="middle" font-weight="700">Telefon · TikTok</text><text x="135" y="86" text-anchor="middle">izleyiciler "katıl" yazar</text><text x="135" y="108" text-anchor="middle" fill="var(--fg3)">sen de buradan izlersin</text>
+<path class="ar" d="M262,75 L318,75"/>
+<rect class="box acc" x="320" y="25" width="250" height="100" rx="14"/><text x="445" y="60" text-anchor="middle" font-weight="700">Tarayıcı · Rotvaryum</text><text x="445" y="86" text-anchor="middle">yorumu okur, balık doğurur</text><text x="445" y="108" text-anchor="middle" fill="var(--fg3)">kullanıcı adınla bağlı</text>
+<path class="ar" d="M572,75 L628,75"/>
+<rect class="box" x="630" y="25" width="260" height="100" rx="14"/><text x="760" y="60" text-anchor="middle" font-weight="700">LIVE Studio</text><text x="760" y="86" text-anchor="middle">pencere + kamera + mikrofon</text><text x="760" y="108" text-anchor="middle" fill="var(--fg3)">"Go LIVE" düğmesi burada</text>
+</svg>
+<div class="two">
+<div class="fix"><b>Takılırsan:</b> Pencere yakalamada oyun siyah görünüyorsa Mac'te ekran kaydı izni eksiktir (Sistem Ayarları → Gizlilik ve Güvenlik → Ekran Kaydı → LIVE Studio'yu aç, programı yeniden başlat).</div>
+<div class="fix"><b>Mac yerine Windows'taysan:</b> Aynı adımlar. İstersen Rotvaryum yerine TikQo'nun ücretsiz <b>Memleket</b> oyununu (plaka kodunu yaz, ilinin kulesine tuğla) deneyebilirsin; o Windows'a kurulan bir program.</div>
+</div>
+</article></div>
+
+<div class="stop"><div class="n">4<small>15:40</small></div><article>
+<h2>Prova: 15 dakikalık kapalı deneme</h2><div class="sure">30 dakika · iki cihaz</div>
+<ol class="do">
+<li>LIVE Studio'da başlık yaz: <b>"katıl yaz, balığın doğsun 🐟 ilk yayın"</b>. Kategori: Sohbet veya Oyun.</li>
+<li><b>Go LIVE</b>'a bas. İlk 10 dakikayı prova say: ikinci hesaptan "katıl" yaz, 5 saniye içinde ekranda balığın adıyla belirmeli.</li>
+<li>Telefondan yayını izle: ses var mı, görüntü dikey ve net mi, oyun yazıları okunuyor mu.</li>
+<li>Kamerada yüzün ve ışık: pencereye dönük otur, tavan lambası arkanda kalmasın.</li>
+<li>Her şey tamamsa yayını kapatma; devam et. Sorun varsa kapat, düzelt, 16:30'da yeniden aç.</li>
+</ol>
+<div class="figrow"><figure class="fig"><img src="img/64049f66067cdba463c96791182c04e3.jpg" alt="Memleket Halkası" loading="lazy"><figcaption><b>Memleket Halkası.</b> Köy meydanı halkası; isim ve plaka rozetleri, Halka Ustaları, tempo, sohbet <span class="tag gozlem">AI ÜRETİMİ</span></figcaption></figure><figure class="fig"><img src="img/1f790b9214b6aa6c73ca9b37562fcf50.jpg" alt="UGC · 'katıl' yazan izleyici" loading="lazy"><figcaption><b>UGC · 'katıl' yazan izleyici.</b> Kafede omuz üstü; ekranda köy meydanı ve sohbet <span class="tag gozlem">AI ÜRETİMİ</span></figcaption></figure></div>
+<div class="ok"><b>Ne göreceksin:</b> Rotvaryum'da ikinci hesabının adı küçük bir balığın üstünde; yem yedikçe büyür. LIVE Studio sağ panelde yorumlar ve izleyici sayısı akar.</div>
+</article></div>
+
+<div class="stop"><div class="n">5<small>16:30</small></div><article>
+<h2>Yayın: 45 dakika, on cümlelik akış</h2><div class="sure">45 dakika · tek seferde</div>
+<p>İlk yayında amaç para değil, mekaniğin çalıştığını ve insanların kaldığını görmek. Bu yüzden hediye istenmez; hediye gelirse balığa olan etkisi gösterilir.</p>
+<div class="timeline">
+<b>0–3 dk</b><span>Boş odaya konuşur gibi başla, normal. Sürekli tekrarla: <i>"Yoruma katıl yaz, balığın doğsun."</i> İlk gelen adı yüksek sesle oku.</span>
+<b>3–15 dk</b><span>Her yeni balığın adını söyle, nereli olduğunu sor. "Kim en büyük balık?" diye tabloyu göster. Yorum soranlara "katıl yaz, hepsi bu" de.</span>
+<b>15–30 dk</b><span>Küçük bir hedef koy: "20 balık olursa müziği değiştiriyorum." Beğeni istemek serbest; hediye istemek yasak (TikTok kuralı: hediye, yorum, beğeni veya paylaşım dilenmek para kazanmayı kapatabilir). <span class="chip resmi">RESMÎ</span></span>
+<b>30–40 dk</b><span>Hediye gelirse teşekkür et ve oyunun ne yaptığını anlat; gelmezse sorun değil. Taç takan balığın sahibini "günün megalodonu" ilan et.</span>
+<b>40–45 dk</b><span>Kapanış: "Yarın aynı saatte, balıkların yerinde duracak." Bir sonraki yayının saatini söyle, yayını kapat.</span>
+</div>
+<div class="two" style="margin-top:14px">
+<div class="say"><small>Açılış cümlesi</small>Merhaba, bu ilk yayınım. Ekranda bir okyanus var; yoruma <b>katıl</b> yazan herkes kendi adıyla bir balık oluyor. Deneyelim mi?</div>
+<div class="say"><small>Soru gelince</small>Nasıl katılıyorum diyorsan: sadece <b>katıl</b> yaz, başka bir şey yok. Beş saniye sonra adın ekranda.</div>
+<div class="say"><small>Sessizlik olursa</small>Şu an on beş balık var, en büyüğü Ayşe'nin. Ayşe nerelisin? Yem bittiğinde kim yetişecek bakalım.</div>
+<div class="say"><small>Hediye gelirse</small>Teşekkürler Mert. Bak, senin balığın büyüdü ve tacı aldı; tablo da değişti.</div>
+</div>
+<h3>Yapma</h3>
+<ul>
+<li>"Hediye atın", "destek olun" tekrarları. Kural riski ve algı riski aynı anda.</li>
+<li>Yüzünü göstermeden sadece oyun ekranı. Platform "yaratıcı varlığı" arıyor; ses ve kamera açık kalsın.</li>
+<li>Gerçek kulüp logosu, telifli müzik, başkasının yüzü.</li>
+<li>Küfürlü kullanıcı adı ekranda kalırsa: LIVE Studio'dan o kullanıcıyı sustur, yorumu sil.</li>
+</ul>
+</article></div>
+
+<div class="stop"><div class="n">6<small>17:30</small></div><article>
+<h2>Kapanış: sayılar ve 60 saniyelik klip</h2><div class="sure">30 dakika</div>
+<ol class="do">
+<li>TikTok uygulamasında <b>LIVE Center → Analiz</b>: toplam izleyici, en yüksek anlık izleyici, ortalama izlenme süresi, yeni takipçi. Bu dört sayıyı bir yere yaz.</li>
+<li>Yayın kaydını (LIVE Studio kayıt açıksa) ya da telefondan çektiğin 60 saniyeyi kes: en kalabalık an + "katıl yaz" cümlesi. Normal video olarak paylaş, açıklamaya yarınki saati yaz.</li>
+<li>Yarın için tek değişiklik seç: saat, başlık ya da oyun. Üç yayın üst üste aynı saatte aç; ancak ondan sonra karşılaştır.</li>
+</ol>
+<div class="tw"><table>
+<tr><th>Sayı</th><th>İlk yayın için makul</th><th>İyi işaret</th></tr>
+<tr><td>Ortalama izlenme süresi</td><td>1–2 dakika</td><td>3 dakikanın üstü: mekanik tutuyor</td></tr>
+<tr><td>Yorum yazan / izleyici</td><td>%10</td><td>%25 ve üstü: "katıl" çağrısı çalışıyor</td></tr>
+<tr><td>En yüksek anlık izleyici</td><td>5–20</td><td>Artış eğrisi kapanışa kadar sürüyorsa</td></tr>
+<tr><td>Hediye</td><td>0</td><td>Gelirse not et; istemediğin hâlde gelmesi en iyi işaret</td></tr>
+</table></div>
+</article></div>
+
+<div class="stop"><div class="n">+<small>sonra</small></div><article>
+<h2>Üçüncü yayından sonra</h2><div class="sure">gelecek hafta</div>
+<p>Sayılar tutuyorsa iki yol var. <b>Hazır oyunlarla devam:</b> Rotvay Premium (10 USD / 30 gün, bütün oyunlar; RotCraft Düğün ve Halat Çekme dahil) veya Windows'ta TikQo Halay Gecesi (499 TL). <b>Kendi sahnen:</b> Katılımlı Yayın Rehberi'ndeki 21 sahneli prototip (Memleket Halkası, Gurbet Haritası, Hatıra Fotoğrafı…) teknik bilen bir arkadaşla bir haftada giydirilir; o zaman ekranda başka kimsede olmayan bir şey olur. <span class="chip oz">fiyatlar satıcı beyanı, 6 Kas 2026</span></p>
+<div class="see"><b>Tek cümlelik özet:</b> Bugün LIVE Studio + ücretsiz oyun + kameran açık 45 dakika. Yarın aynı saat. Üçüncü günden sonra karar.</div>
+</article></div>
+
+<p class="foot">Kaynaklar: tiktok.com/studio/download ve LIVE Studio SSS (19 Ağu 2026) Mac sürümü için; TikTok LIVE erişim ve para kazanma kuralları için resmî yardım sayfaları (Katılımlı Yayın Atlası kanıt setinde ekran görüntüleriyle); Rotvay Rotvaryum ürün sayfası (6 Kas 2026, satıcı beyanı). Takipçi eşiği ve LIVE erişimi ülkeye ve hesaba göre değişir; kesin bilgi uygulamanın içindedir.</p>
+</div>
+<style data-tema="mobil">/* Mobil (≤900px): tek sütun, açılır içindekiler, kaydırılabilir tablolar, büyük dokunma hedefleri */
+@media (max-width:900px){
+  html{font-size:18px}body{font-size:18px;line-height:1.6}
+  .wrap{gap:14px;padding-block:10px 70px}
+  nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;max-height:0;padding:0 14px;overflow:hidden;border-width:0;margin:0;transition:max-height .25s}
+  nav.toc.open{max-height:70vh;overflow:auto;padding:14px;border-width:1px;margin-top:8px}
+  .toc-btn{position:sticky;top:env(safe-area-inset-top,0px);z-index:41;display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:10px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);color:var(--fg);font:700 16px var(--fd,sans-serif);cursor:pointer;box-shadow:var(--shadow,none)}
+  .toc-btn::before{content:"☰";font-size:20px;color:var(--accent2,#f2b25a)}
+  .toc-btn.on::before{content:"✕"}
+  nav.toc a{min-height:44px;display:flex;align-items:center;padding:6px 8px;font-size:16px}
+  h1{font-size:clamp(28px,8vw,40px)!important}h2{font-size:clamp(26px,7vw,36px)!important}h3{font-size:22px!important}h4{font-size:19px!important}.sub{font-size:19px!important}
+  .stage,section{padding:22px 16px!important;border-radius:18px!important}
+  .grid3,.grid,.q3,.figrow,.fk2 .q2,.bilesen{grid-template-columns:1fr!important}
+  .fk-grid{grid-template-columns:1fr!important}.fk-gor.n3,.fk-gor.n2{grid-template-columns:1fr 1fr!important}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}.tw table{min-width:560px}table.ulke{min-width:760px}
+  .fk2 table.mini{min-width:0}
+  img,video,svg{max-width:100%;height:auto}
+  pre{white-space:pre-wrap;word-break:break-word;font-size:14px}
+  details.yp summary{font-size:18px;min-height:48px;align-items:center}.ypsub{display:none}
+  ol.asama li{padding-left:50px;font-size:16px}ol.asama li::before{width:36px;height:36px;font-size:17px;border-radius:10px}
+  .fk-bas h4{font-size:20px!important}.fk-aile{font-size:12px}
+  .callout,.card{padding:14px 14px}
+  .docs{grid-template-columns:1fr!important}
+  a,button,summary{-webkit-tap-highlight-color:transparent}
+}
+@media (max-width:480px){.fk-gor.n3,.fk-gor.n2{grid-template-columns:1fr!important}html{font-size:17px}body{font-size:17px}}
+</style><script>/* Mobil içindekiler düğmesi: dar ekranda nav.toc'u aç/kapat */
+(function(){var t=document.querySelector('nav.toc');if(!t)return;var mq=window.matchMedia('(max-width:900px)');var b=document.createElement('button');b.type='button';b.className='toc-btn';b.textContent='İçindekiler';b.setAttribute('aria-expanded','false');
+function setup(){if(mq.matches){if(!b.parentNode)t.parentNode.insertBefore(b,t);t.classList.remove('open');}else{if(b.parentNode)b.parentNode.removeChild(b);t.classList.remove('open');}}
+b.addEventListener('click',function(){var o=t.classList.toggle('open');b.classList.toggle('on',o);b.setAttribute('aria-expanded',o?'true':'false');});
+t.addEventListener('click',function(e){if(e.target.closest('a')&&mq.matches){t.classList.remove('open');b.classList.remove('on');}});
+setup();mq.addEventListener?mq.addEventListener('change',setup):mq.addListener(setup);})();
+</script></body></html>
