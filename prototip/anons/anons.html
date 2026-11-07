@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Radyo Anons — yorumla katıl sahnesi (tek dosya)</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:system-ui,sans-serif}
+canvas{display:block;margin:0 auto;height:100vh;aspect-ratio:9/16;background:#111}
+#help{position:fixed;left:8px;bottom:8px;background:rgba(0,0,0,.7);color:#fff;font:12px/1.5 monospace;padding:8px 10px;border-radius:8px;max-width:560px}
+#help b{color:#ffd54f}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div id="help">Radyo Anons · <b>?demo=1</b> sahte izleyici · <b>?seed=N</b> anında doldur · <b>k</b> anons · <b>l</b> 20 beğeni · <b>1</b> gül · <b>2</b> parfüm (sabitle) · <b>3</b> donut (DJ) · <b>4</b> kalp (jingle) · <b>5</b> galaxy (canlı konuk) · <b>t</b> ses · <b>p</b> duraklat · <b>m</b> sustur · <b>h</b> gizle<br>Gerçek bağlantı: <b>node ../server.js &lt;kullanici_adi&gt;</b> → ws://localhost:8787 · varlıklar <b>sprites/</b> (yoksa vektör çizim)</div>
+<script>
+/* =====================================================================
+   RADYO ANONS — "X'ten Y'ye selam" yaz, anons panosuna gir.
+   Tek dosya, kütüphane yok. Her şey burada: olay sözleşmesi, metin filtresi,
+   anons kuyruğu, kart animasyonları, VU metre, dönen plak, YAYINDA lambası,
+   jingle, sentez sesler (WebAudio), TTS, hediye rolleri, operatör tuşları.
+   Bölüm numaraları Kılavuz'daki adımlarla aynı (A1…A12).
+   ===================================================================== */
+
+/* A1 · Ayarlar */
+const CONFIG={
+  wsUrl:"ws://localhost:8787",
+  tts:false,                      // t tuşu açar
+  kartSure:45000,                 // bir anons kartı ekranda kaç ms kalır
+  sabitSure:30000,                // Perfume ile sabitlenen kart
+  djSure:120000,                  // Doughnut ile DJ koltuğu
+  konukSure:15000,                // Galaxy ile canlı konuk
+  maxKart:7, maxAnonsUzunluk:70,
+  kisiBasiBekleme:8000,           // aynı kişi 8 sn'de bir anons
+  banned:["örnek_küfür"],         // gerçek liste: kayitlar/kufur.txt (ooguz/turkce-kufur-karaliste, CC BY-SA 4.0)
+  gifts:{"Rose":{coins:1,action:"alkis",label:"Alkış"},"Finger Heart":{coins:5,action:"alkis",label:"Alkış"},"Perfume":{coins:20,action:"sabit",label:"Anonsu sabitledi"},"Doughnut":{coins:30,action:"dj",label:"DJ koltuğu"},"Hand Hearts":{coins:100,action:"jingle",label:"Jingle!"},"Galaxy":{coins:1000,action:"konuk",label:"CANLI YAYIN KONUĞU"}}
+};
+const W=1080,H=1920; const cv=document.getElementById("c"), ctx=cv.getContext("2d");
+
+/* A2 · Varlıklar: sprites/ klasöründen yüklenir; yoksa aşağıdaki vektör çizimler kullanılır */
+const ASSET={bg:"bg_anons.jpg",dj_k:"dj_k.png",dj_a:"dj_a.png",mic:"mic.png",plak:"plak.png",lamba:"lamba.png",kart:"kart.png"};
+const IMGS={}; for(const [k,f] of Object.entries(ASSET)){ const i=new Image(); i.src="sprites/"+f; IMGS[k]=i; }
+const img=k=>{ const i=IMGS[k]; return (i&&i.complete&&i.naturalWidth)?i:null; };
+function sprite(k,x,y,h,w){ const i=img(k); if(!i) return false; const ww=w||h*(i.naturalWidth/i.naturalHeight); ctx.drawImage(i,x-ww/2,y-h/2,ww,h); return true; }
+
+/* A3 · Durum */
+const S={kartlar:[],sabit:null,dj:null,konuk:null,likes:[],fx:[],events:[],viewers:0,members:new Map(),order:[],lead:new Map(),sonAnons:new Map(),paused:false,muted:false,tick:0,sonKart:0};
+try{ (JSON.parse(localStorage.getItem("anons_lead")||"[]")).forEach(([k,v])=>S.lead.set(k,v)); }catch(e){}
+const saveLead=()=>{ try{ localStorage.setItem("anons_lead",JSON.stringify([...S.lead.entries()].slice(0,500))); }catch(e){} };
+
+/* A4 · Yardımcılar ve metin filtresi (sese ve ekrana giden her şey buradan geçer) */
+const lower=s=>String(s||"").toLocaleLowerCase("tr");
+const clean=s=>String(s||"").replace(/https?:\/\/\S+/g,"").replace(/[^\p{L}\p{N} _.\-]/gu,"").trim().slice(0,14)||"izleyici";
+const hue=seed=>{let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))&0xffff;return h%360;};
+const col=seed=>`hsl(${hue(seed)} 70% 55%)`;
+function filtrele(t){
+  let s=String(t||"").replace(/https?:\/\/\S+|www\.\S+/gi,"").replace(/\+?\d[\d\s\-]{7,}\d/g,"").replace(/\s+/g," ").trim(); // link ve telefon numarası silinir
+  if(!s) return {ok:false,neden:"bos"};
+  if(/önceki talimat|talimatları unut|ignore previous|sistem istemi/i.test(s)) return {ok:false,neden:"enjeksiyon"};
+  const w=lower(s).split(/[^\p{L}\p{N}_]+/u); if(w.some(x=>CONFIG.banned.includes(x))) return {ok:false,neden:"kufur"};
+  return {ok:true,temiz:s.slice(0,CONFIG.maxAnonsUzunluk)};
+}
+/* "Ankara'dan Ayşe'ye selam" → {nereden, kime, mesaj}; kalıba uymazsa tamamı mesaj olur */
+function ayristir(t){
+  const m=t.match(/^(.+?)['’]?(?:dan|den|tan|ten|ndan|nden)\s+(.+?)['’]?(?:a|e|ya|ye|na|ne)\s+(.+)$/i);
+  if(m) return {nereden:m[1].trim(),kime:m[2].trim(),mesaj:m[3].trim()};
+  const m2=t.match(/^(.+?)['’]?(?:dan|den|tan|ten)\s+(.+)$/i); if(m2) return {nereden:m2[1].trim(),kime:"",mesaj:m2[2].trim()};
+  return {nereden:"",kime:"",mesaj:t};
+}
+function pushEvent(key,name,color){ const last=S.events[0]; if(last&&last.key===key){ last.names.push(name); last.t=performance.now(); if(last.names.length>4)last.names.shift(); return; } S.events.unshift({key,names:[name],color:color||"#fff",t:performance.now()}); S.events=S.events.slice(0,4); }
+function addPoints(id,n){ S.lead.set(id,(S.lead.get(id)||0)+n); if(S.tick%120===0) saveLead(); }
+
+/* A5 · Ses: WebAudio ile sentez (telif yok). Jingle, statik "cızırtı", alkış, radyo bip. İlk kullanıcı etkileşiminden sonra çalışır. */
+let AC=null; const ac=()=>{ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; };
+function bip(f=880,ms=120,tip="sine",gain=.08){ const a=ac(); if(!a||S.muted) return; const o=a.createOscillator(), g=a.createGain(); o.type=tip; o.frequency.value=f; g.gain.value=gain; o.connect(g); g.connect(a.destination); o.start(); g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+ms/1000); o.stop(a.currentTime+ms/1000); }
+function cizirti(ms=350,gain=.05){ const a=ac(); if(!a||S.muted) return; const n=a.sampleRate*ms/1000, buf=a.createBuffer(1,n,a.sampleRate), d=buf.getChannelData(0); for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n); const src=a.createBufferSource(); src.buffer=buf; const f=a.createBiquadFilter(); f.type="bandpass"; f.frequency.value=1800; const g=a.createGain(); g.gain.value=gain; src.connect(f); f.connect(g); g.connect(a.destination); src.start(); }
+function jingleSes(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>bip(f,220,"triangle",.1),i*110)); }
+function alkisSes(){ for(let i=0;i<14;i++) setTimeout(()=>cizirti(60,.04),i*55+Math.random()*30); }
+function speak(t){ if(!CONFIG.tts||S.muted||!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(t); u.lang="tr-TR"; u.rate=.95; u.pitch=.9; speechSynthesis.speak(u); }
+
+/* A6 · Olay sözleşmesi (katil.html ile aynı): {type, user, nick, avatar, text, count, giftName, coins, repeat} */
+function uye(e){ const id=e.user||("u"+Math.random()); let m=S.members.get(id); if(!m){ m={id,nick:clean(e.nick||id),color:col(id),joined:performance.now(),photo:null}; S.members.set(id,m); S.order.push(id); if(e.avatar){ const im=new Image(); im.crossOrigin="anonymous"; im.onload=()=>m.photo=im; im.src=e.avatar; } addPoints(id,5); } return m; }
+function onEvent(e){ if(S.paused&&e.type!=="viewers") return; const now=performance.now();
+  switch(e.type){
+    case "comment": case "chat": { const m=uye(e); const f=filtrele(e.text); if(!f.ok){ if(f.neden!=="bos") pushEvent("okunmadı ("+f.neden+")",m.nick,"#ff8a80"); return; }
+      if(now-(S.sonAnons.get(m.id)||-1e9)<CONFIG.kisiBasiBekleme){ pushEvent("sıra bekliyor",m.nick,"#ffcc80"); return; } S.sonAnons.set(m.id,now);
+      const a=ayristir(f.temiz); const oncelik=S.dj&&S.dj.id===m.id?2:1; kartEkle({m,...a,ham:f.temiz,oncelik}); addPoints(m.id,1); break; }
+    case "like": { const n=+e.count||1; S.likes.push([now,n]); if(e.user) addPoints(e.user,Math.floor(n/10)); break; }
+    case "join": case "member": { const m=uye(e); pushEvent("dinlemeye başladı",m.nick,"#80deea"); break; }
+    case "gift": { const m=uye(e); const g=CONFIG.gifts[e.giftName]||{coins:+e.coins||1,action:"alkis",label:e.giftName||"Hediye"}; const coins=(+e.coins||g.coins||1)*(+e.repeat||1); addPoints(m.id,coins); hediye(m,g,coins); break; }
+    case "viewers": S.viewers=+e.count||S.viewers; break;
+    case "say": break;
+  }
+}
+
+/* A7 · Anons kuyruğu ve kart yaşam döngüsü: gelir (sağdan kayar), bekler, solar; en çok maxKart; öncelik DJ'de */
+function kartEkle(k){ k.at=performance.now(); k.id=Math.random().toString(36).slice(2); k.x=W+200; S.kartlar.unshift(k); S.kartlar.sort((a,b)=>b.oncelik-a.oncelik||b.at-a.at); S.kartlar=S.kartlar.slice(0,CONFIG.maxKart);
+  cizirti(300,.05); setTimeout(()=>bip(1320,90,"square",.05),250); const metin=(k.nereden?k.nereden+"'dan ":"")+(k.kime?k.kime+"'ye ":"")+k.mesaj; speak(metin); pushEvent("anons",k.m.nick,"#ffe082"); }
+function hediye(m,g,coins){ const now=performance.now(); pushEvent(g.label,m.nick,"#ffd54f");
+  if(g.action==="alkis"){ alkisSes(); S.fx.push({tip:"alkis",t:now,x:540,y:1500}); }
+  if(g.action==="sabit"){ const k=S.kartlar.find(x=>x.m.id===m.id)||S.kartlar[0]; if(k){ S.sabit={...k,sabitAt:now}; bip(660,200,"triangle",.08); } }
+  if(g.action==="dj"){ S.dj={...m,at:now}; jingleSes(); speak("DJ koltuğunda "+m.nick); }
+  if(g.action==="jingle"||coins>=100){ jingleSes(); S.fx.push({tip:"jingle",t:now,x:540,y:620}); }
+  if(g.action==="konuk"||coins>=500){ S.konuk={...m,at:now}; jingleSes(); setTimeout(jingleSes,500); speak("Canlı yayın konuğumuz "+m.nick); }
+}
+
+/* A8 · Çizim yardımcıları (hepsi vektör; sprite varsa üstüne biner) */
+function txt(t,x,y,size=22,color="#fff",align="left",weight="",font="sans-serif"){ ctx.font=`${weight} ${size}px ${font}`; ctx.fillStyle=color; ctx.textAlign=align; ctx.fillText(t,x,y); }
+function panel(x,y,w,h,a=.6,r=16){ ctx.fillStyle=`rgba(0,0,0,${a})`; ctx.beginPath(); ctx.roundRect(x,y,w,h,r); ctx.fill(); }
+function satirlar(t,maxW,font){ ctx.font=font; const out=[]; let cur=""; for(const w of t.split(" ")){ const d=cur?cur+" "+w:w; if(ctx.measureText(d).width>maxW&&cur){ out.push(cur); cur=w; } else cur=d; } if(cur) out.push(cur); return out.slice(0,3); }
+function avatar(x,y,m,r=34){ ctx.save(); ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.closePath(); ctx.clip(); if(m.photo) ctx.drawImage(m.photo,x-r,y-r,2*r,2*r); else { ctx.fillStyle=m.color; ctx.fillRect(x-r,y-r,2*r,2*r); txt(m.nick[0].toUpperCase(),x,y+r*.35,r,"#fff","center","bold"); } ctx.restore(); ctx.strokeStyle="#fff"; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.stroke(); }
+const ease=t=>1-Math.pow(1-Math.min(1,Math.max(0,t)),3); // ease-out cubic
+
+/* A9 · Sahne elemanları: arka plan, YAYINDA lambası, plak, VU metre, DJ, mikrofon */
+function arkaPlan(now){ if(!sprite("bg",W/2,H/2,H,W)){ const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,"#2b1a12"); g.addColorStop(.5,"#1a110c"); g.addColorStop(1,"#0d0906"); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); ctx.strokeStyle="rgba(255,200,120,.08)"; for(let i=0;i<24;i++){ ctx.beginPath(); ctx.moveTo(0,i*80); ctx.lineTo(W,i*80); ctx.stroke(); } } }
+function lamba(now,x,y){ const on=Math.floor(now/700)%2===0; if(sprite("lamba",x,y,110)){ if(!on){ ctx.fillStyle="rgba(0,0,0,.45)"; ctx.beginPath(); ctx.roundRect(x-130,y-50,260,100,14); ctx.fill(); } return; }
+  ctx.fillStyle="#3a2a24"; ctx.beginPath(); ctx.roundRect(x-130,y-50,260,100,14); ctx.fill(); ctx.fillStyle=on?"#ff3b30":"#5a1d18"; ctx.beginPath(); ctx.roundRect(x-118,y-38,236,76,10); ctx.fill(); if(on){ ctx.shadowColor="#ff3b30"; ctx.shadowBlur=40; ctx.fill(); ctx.shadowBlur=0; } txt("YAYINDA",x,y+14,38,"#fff","center","900"); }
+function plak(now,x,y,r,hiz){ const a=(now/1000)*hiz*6.28; ctx.save(); ctx.translate(x,y); ctx.rotate(a); if(!sprite("plak",0,0,r*2)){ ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(0,0,r,0,6.28); ctx.fill(); ctx.strokeStyle="rgba(255,255,255,.08)"; for(let i=1;i<6;i++){ ctx.beginPath(); ctx.arc(0,0,r*i/6,0,6.28); ctx.stroke(); } ctx.fillStyle="#ff8f00"; ctx.beginPath(); ctx.arc(0,0,r*.3,0,6.28); ctx.fill(); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(0,0,6,0,6.28); ctx.fill(); ctx.fillStyle="#fff"; ctx.fillRect(r*.3,-3,r*.6,6); } ctx.restore(); }
+function vu(now,x,y,rate){ const n=20, vol=Math.min(n,Math.floor(rate/4)); for(let i=0;i<n;i++){ const h=24+Math.sin(now/180+i*.7)*8; const on=i<vol||(i<vol+2&&Math.random()<.3); ctx.fillStyle=on?(i<12?"#66bb6a":i<17?"#ffca28":"#ef5350"):"rgba(255,255,255,.12)"; ctx.fillRect(x+i*30,y-h,22,h); } txt("ses: "+(rate>=60?"BAĞIRIYOR":rate>=30?"yüksek":rate>=10?"orta":"kısık"),x,y+34,20,"#ffe082","left","bold"); }
+function dj(now,x,y){ const konusuyor=S.kartlar.length&&now-S.kartlar[0].at<2500; const kare=konusuyor&&Math.floor(now/120)%2===0?"dj_a":"dj_k"; const bob=Math.sin(now/400)*4; if(!sprite(kare,x,y+bob,380)){ ctx.fillStyle="#4e342e"; ctx.beginPath(); ctx.roundRect(x-70,y-40+bob,140,200,30); ctx.fill(); ctx.fillStyle="#ffcc80"; ctx.beginPath(); ctx.arc(x,y-90+bob,60,0,6.28); ctx.fill(); ctx.fillStyle="#212121"; ctx.beginPath(); ctx.arc(x,y-90+bob,70,3.3,6.1); ctx.lineWidth=14; ctx.strokeStyle="#212121"; ctx.stroke(); ctx.fillStyle="#3e2723"; ctx.beginPath(); ctx.ellipse(x,y-60+bob,konusuyor&&Math.floor(now/120)%2===0?16:10,konusuyor?10:4,0,0,6.28); ctx.fill(); }
+  if(S.dj&&now-S.dj.at<CONFIG.djSure){ avatar(x+120,y-120,S.dj,36); txt("DJ "+S.dj.nick,x+120,y-60,20,"#ffe082","center","bold"); } else if(S.dj) S.dj=null; }
+function mikrofon(now,x,y){ if(sprite("mic",x,y,170)) return; ctx.fillStyle="#263238"; ctx.fillRect(x-8,y-40,16,120); ctx.beginPath(); ctx.ellipse(x,y+80,60,12,0,0,6.28); ctx.fill(); ctx.fillStyle="#b71c1c"; ctx.beginPath(); ctx.roundRect(x-34,y-110,68,90,24); ctx.fill(); ctx.strokeStyle="rgba(255,255,255,.35)"; for(let i=0;i<4;i++){ ctx.beginPath(); ctx.moveTo(x-30,y-95+i*20); ctx.lineTo(x+30,y-95+i*20); ctx.stroke(); } }
+
+/* A10 · Anons kartı çizimi: sağdan kayarak gelir (600 ms), bekler, son 5 sn'de solar; sabit kart altın çerçeveli ve üstte */
+function kart(k,i,now,sabit=false){ const age=now-k.at; const slide=ease(age/600); const y0=sabit?520:700+i*150; const x=sabit?80:80+(1-slide)*(W+100); const alpha=sabit?1:Math.min(1,Math.max(.15,(CONFIG.kartSure-age)/5000));
+  ctx.save(); ctx.globalAlpha=alpha;
+  if(!sprite("kart",x+460,y0+60,124,920)){ ctx.fillStyle=sabit?"#fff8e1":"#fdf6e3"; ctx.beginPath(); ctx.roundRect(x,y0,920,124,18); ctx.fill(); }
+  ctx.fillStyle=k.m.color; ctx.fillRect(x,y0,16,124);
+  if(sabit){ ctx.strokeStyle="#ffd54f"; ctx.lineWidth=6; ctx.beginPath(); ctx.roundRect(x,y0,920,124,18); ctx.stroke(); txt("📌 SABİT ANONS",x+40,y0-14,20,"#ffd54f","left","bold"); }
+  avatar(x+64,y0+62,k.m,30);
+  const bas=(k.nereden?k.nereden+" → ":"")+(k.kime?k.kime:"herkese"); txt(bas,x+116,y0+42,22,"#6d4c41","left","bold");
+  const lines=satirlar(k.mesaj,760,"26px sans-serif"); lines.forEach((l,j)=>txt(l,x+116,y0+78+j*30,26,"#212121","left"));
+  txt(k.m.nick,x+900,y0+42,18,"#8d6e63","right"); ctx.restore(); }
+
+/* A11 · Efektler: jingle patlaması, alkış elleri, canlı konuk bandı */
+function efektler(now){ S.fx=S.fx.filter(f=>now-f.t<1600); S.fx.forEach(f=>{ const a=(now-f.t)/1600; if(f.tip==="jingle"){ for(let i=0;i<18;i++){ ctx.fillStyle=`hsl(${i*20} 90% 60%)`; ctx.globalAlpha=1-a; ctx.beginPath(); ctx.arc(f.x+Math.cos(i)*a*300,f.y+Math.sin(i)*a*300,8,0,6.28); ctx.fill(); } ctx.globalAlpha=1; txt("♪ JINGLE ♪",f.x,f.y-a*120,54,"#ffe082","center","900"); }
+    if(f.tip==="alkis"){ ctx.globalAlpha=1-a; txt("👏👏👏",f.x,f.y-a*200,70,"#fff","center"); ctx.globalAlpha=1; } });
+  if(S.konuk){ const age=now-S.konuk.at; if(age>CONFIG.konukSure){ S.konuk=null; } else { const s=ease(age/500); panel(120,1180,840,230*s,.85,24); if(s>.9){ avatar(220,1295,S.konuk,70); txt("CANLI YAYIN KONUĞU",330,1270,24,"#80deea","left","bold"); txt(S.konuk.nick,330,1330,52,"#fff","left","900"); txt("15 saniye mikrofon onda",330,1375,22,"#ffe082","left"); } } } }
+
+/* A12 · Ana döngü ve HUD */
+function draw(now){ S.tick++; S.likes=S.likes.filter(([t])=>now-t<10000); const rate=S.likes.reduce((a,[,n])=>a+n,0); const hiz=.3+Math.min(1.5,rate/60);
+  arkaPlan(now);
+  panel(400,40,280,44,.5); txt("Radyo Anons",540,70,22,"#ffe082","center","bold");
+  lamba(now,540,160); plak(now,160,330,110,hiz); mikrofon(now,900,330); dj(now,540,380);
+  vu(now,250,520,rate);
+  // sıralama
+  const top=[...S.lead.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5); panel(24,40,340,60+top.length*40,.6); txt("🏆 Anons kralları",44,80,24,"#ffd54f","left","bold"); top.forEach(([id,p],i)=>{ const m=S.members.get(id); txt(`${i+1}  ${m?m.nick:id}`,44,120+i*40,20,"#fff","left"); txt(String(p),344,120+i*40,20,"#ffd54f","right"); });
+  panel(880,40,176,44,.5); txt(`👥 ${S.viewers||S.order.length}`,968,70,20,"#fff","center");
+  // kartlar
+  if(S.sabit){ if(now-S.sabit.sabitAt>CONFIG.sabitSure) S.sabit=null; else kart(S.sabit,0,now,true); }
+  S.kartlar=S.kartlar.filter(k=>now-k.at<CONFIG.kartSure); S.kartlar.forEach((k,i)=>kart(k,i,now));
+  if(!S.kartlar.length&&!S.sabit){ panel(120,760,840,120,.5); txt("Anons panosu boş. 'Ankara'dan Ayşe'ye selam' yaz.",540,830,28,"#ffe082","center","bold"); }
+  efektler(now);
+  // dinleyiciler
+  S.order.slice(-8).forEach((id,i)=>{ const m=S.members.get(id); avatar(90+i*128,1720,m,30); txt(m.nick,90+i*128,1775,16,"#fff","center"); });
+  // olay şeridi + çağrı bandı
+  S.events.forEach((ev,i)=>{ const age=(now-ev.t)/1000; if(age>8) return; ctx.globalAlpha=Math.max(0,1-age/8); panel(60,1520+i*44,960,38,.65,10); txt(ev.key+"  ·  "+ev.names.join(" · "),80,1547+i*44,20,ev.color,"left","bold"); ctx.globalAlpha=1; });
+  panel(120,1830,840,60,.7); txt("💬 'X'ten Y'ye selam' yaz, anons panosuna gir · beğeni sesi açar",540,1869,24,"#ffd54f","center","bold");
+  if(S.paused){ panel(240,880,600,120,.85); txt("⏸ DURAKLATILDI",540,935,40,"#ff8a65","center","bold"); txt("p ile devam",540,975,22,"#fff","center"); }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* Giriş: demo, seed, WebSocket, tuşlar */
+const params=new URLSearchParams(location.search);
+const demoNames=["Ayşe","Mert","Elif","Hasan","Zeynep","Ecem","Yusuf","Derya","Kerem","Sude","Baran","Nehir","Ali","Melis","Can","Ravza"];
+const demoText=["Ankara'dan Ayşe'ye selam","İzmir'den anneme sevgiler","Berlin'den memlekete selam","Trabzon'dan Hasan'a kocaman selam","gece vardiyasındakilere selam","Bursa'dan okul arkadaşlarıma","Konya'dan babama iyi ki varsın","Adana'dan tüm dinleyenlere","Köln'den Diyarbakır'a selamlar","Samsun'dan eşime: eve geç kalacağım"];
+function seed(n){ for(let i=0;i<n;i++){ const u=demoNames[i%demoNames.length]+(i>15?i:""); S.sonAnons.clear(); onEvent({type:"comment",user:u,nick:u,text:demoText[i%demoText.length]}); } onEvent({type:"gift",user:"Ayşe",giftName:"Perfume"}); onEvent({type:"gift",user:"Mert",giftName:"Doughnut"}); for(let i=0;i<5;i++) onEvent({type:"like",user:"Elif",count:9}); onEvent({type:"viewers",count:128}); S.events=S.events.slice(0,3); }
+if(params.get("seed")){ seed(+params.get("seed")); document.getElementById("help").hidden=true; }
+if(params.get("demo")){ setInterval(()=>{ const u=demoNames[Math.floor(Math.random()*demoNames.length)]+Math.floor(Math.random()*90); onEvent({type:"comment",user:u,nick:u,text:demoText[Math.floor(Math.random()*demoText.length)]}); },2500);
+  setInterval(()=>onEvent({type:"like",user:demoNames[Math.floor(Math.random()*demoNames.length)],count:Math.ceil(Math.random()*12)}),600);
+  setInterval(()=>{ const g=["Rose","Rose","Perfume","Doughnut","Hand Hearts"][Math.floor(Math.random()*5)]; onEvent({type:"gift",user:demoNames[Math.floor(Math.random()*demoNames.length)],giftName:g}); },9000); }
+else if(!params.get("seed")){ (function connect(){ let ws; try{ ws=new WebSocket(CONFIG.wsUrl);}catch(e){ return setTimeout(connect,3000); } ws.onmessage=ev=>{ try{ onEvent(JSON.parse(ev.data)); }catch(e){} }; ws.onclose=()=>setTimeout(connect,3000); })(); }
+addEventListener("keydown",e=>{ const pick=()=>demoNames[Math.floor(Math.random()*demoNames.length)];
+  if(e.key==="k"){ S.sonAnons.clear(); onEvent({type:"comment",user:"test"+Date.now()%100,nick:"Test"+Date.now()%100,text:demoText[Math.floor(Math.random()*demoText.length)]}); }
+  if(e.key==="l") onEvent({type:"like",user:pick(),count:20});
+  if(e.key==="1") onEvent({type:"gift",user:pick(),giftName:"Rose"}); if(e.key==="2") onEvent({type:"gift",user:pick(),giftName:"Perfume"}); if(e.key==="3") onEvent({type:"gift",user:pick(),giftName:"Doughnut"}); if(e.key==="4") onEvent({type:"gift",user:pick(),giftName:"Hand Hearts"}); if(e.key==="5") onEvent({type:"gift",user:pick(),giftName:"Galaxy"});
+  if(e.key==="t") CONFIG.tts=!CONFIG.tts; if(e.key==="p"){ S.paused=!S.paused; if(window.speechSynthesis) speechSynthesis.cancel(); } if(e.key==="m"){ S.muted=!S.muted; if(window.speechSynthesis) speechSynthesis.cancel(); }
+  if(e.key==="r"){ S.lead.clear(); saveLead(); } if(e.key==="h") document.getElementById("help").hidden=!document.getElementById("help").hidden; ac(); });
+addEventListener("pointerdown",()=>ac());
+</script>
+</body>
+</html>

@@ -433,7 +433,9 @@ node server.js tiktok_kullanici_adin</code></pre>
 <div class="callout warn"><b>Takılırsan:</b> "köprü kapandı" yazıyorsa <code>server.js</code> çalışmıyordur (8787 portu). Cevap gelmiyorsa anahtar boş veya kota dolu: terminaldeki "[beyin] gemini başarısız: 429" satırına bak; sıradaki sağlayıcı denenir, hiçbiri yoksa "yedek" hazır cevap gelir. Küfür listesi yoksa yalnız küçük örnek liste çalışır: <code>kayitlar/kufur.txt</code> dosyasına satır başına bir kelime koy (ooguz/turkce-kufur-karaliste, lisansını oku ve atıf ekle).</div>
 <h3>C · Minecraft olayları (isteğe bağlı, ileri)</h3>
 <p>Belgedeki tasarım: beğeni eşikleri Minecraft sunucusunda zombi, iskelet, TNT yağmuru, creeper doğurur. Bizim prototipte aynı eşikler ekran olaylarıdır. Minecraft istersen <code>ai/ISTEM.md</code> 9. adım: Paper sunucu (Mineflayer'ın desteklediği sürüm, şu an 1.8–1.21.11 belirtiliyor; npm'den teyit), EULA'yı sen onaylarsın, <code>enable-rcon=true</code>, <code>rcon.port=25575</code>, parola <code>.env</code>'de, yalnız 127.0.0.1, yerel bot için <code>online-mode=false</code> (sunucu dışa açılırsa kimliksiz giriş riski), güvenli yarıçap ve olay başına üst sınır, izleyici adı <code>CustomName</code>. Minecraft Java yalnız lisanslı hesapla oynanır.</p>
-<h3>D · Claude Code ile kurdurmak</h3>
+<h3>D · İki tam örnek: Radyo Anons ve Çiğ Köfte</h3>
+<p>İki sahne sıfırdan, satıcısız ve kütüphanesiz yazıldı; animasyonlar ve sesler kodda. <code>prototip/anons/anons.html?demo=1</code> ve <code>prototip/cigkofte/cigkofte.html?demo=1</code> ile aç. Adım adım yapımı (düzen, komut ve hediye tabloları, animasyon süreleri, sesler, 12 adım) Kılavuz 05f ve 05g bölümlerinde.</p>
+<h3>E · Claude Code ile kurdurmak</h3>
 <p><code>prototip/ai/ISTEM.md</code> dosyasının tamamını Claude Code'a yapıştır. İstem; önce plan ister, anahtarları sohbete yazdırmaz, indirme ve ücretli çağrı öncesi sorar, her adımı çalıştırıp kanıtlatır, sonunda maliyet ve sınır raporu ister. Önce 1. bölümdeki dört soruyla başlar (ortam, kapsam, karakter, ses).</p>
 <div class="tw"><table>
 <tr><th>Dosya</th><th>Ne yapar</th></tr>
