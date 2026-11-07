@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Çiğ Köfte Çeşitleri · Harman</title>
+<link rel="stylesheet" href="../site.css">
+<style>
+:root{--pad:max(16px,env(safe-area-inset-left,0px))}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.ck{max-width:1100px;margin:0 auto;padding-inline:var(--pad) max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.ck .stage{padding:26px 20px 22px;border-radius:20px}
+.ck .stage h1{font-family:var(--fd);font-size:clamp(26px,6vw,44px);line-height:1.08;margin:6px 0 10px;text-wrap:balance}
+.ck .stage p{margin:0;font-size:15px;color:#d9d4c7;max-width:62ch}
+.ck .eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2)}
+.sayac{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.sayac span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px 11px;font-size:13px;color:#f6f3ea}
+.tabs{position:sticky;top:0;z-index:20;background:var(--bg);margin:12px calc(-1*var(--pad)) 0;padding:8px var(--pad);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;padding:8px 13px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);color:var(--fg2);font-size:14px;font-weight:600;white-space:nowrap}
+.tabs a.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.ck section{background:transparent!important;border:0!important;padding:22px 0 8px!important;border-radius:0!important;margin:0;position:static} .ck section::before{display:none} .mix .out img.yok{opacity:0} .mix .out figure{position:relative} .mix .out figure.yok::after{content:'görsel üretiliyor';position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:var(--fg3);background:repeating-linear-gradient(45deg,var(--bg3) 0 10px,var(--bg2) 10px 20px)}
+.ck section>h2{font-family:var(--fd);font-size:clamp(22px,5vw,32px);margin:0 0 4px;text-wrap:balance}
+.ck section>p.lead{color:var(--fg2);margin:0 0 16px;max-width:70ch}
+.sur{background:var(--bg2);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin:0 0 22px;box-shadow:var(--shadow)}
+.sur-hero{position:relative;background:var(--bg3)}
+.sur-hero figure{margin:0}
+.sur-hero img{display:block;width:100%;height:auto;max-height:78vh;object-fit:cover;object-position:center 30%;cursor:zoom-in}
+.sur-no{position:absolute;left:12px;top:12px;background:var(--accent);color:var(--accent-ink);font-family:var(--fm);font-weight:700;padding:4px 9px;border-radius:8px;font-size:13px}
+.sur-body{padding:16px}
+.sur h3{font-family:var(--fd);font-size:clamp(21px,5vw,28px);margin:0;line-height:1.15}
+.sur .alt{color:var(--fg2);margin:4px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.chip{font-size:12.5px;padding:4px 10px;border-radius:999px;background:var(--bg3);color:var(--fg2);border:1px solid var(--line)}
+.chip.b{background:var(--accentbg);color:var(--accent);border-color:transparent;font-weight:600}
+.row3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 18px;margin:6px 0 10px}
+.row3 h4,.sur-body h4{margin:10px 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3)}
+.row3 p{margin:0;font-size:14.5px;line-height:1.5}
+.sur-body h4 small{text-transform:none;letter-spacing:0;font-weight:400}
+ul.mal{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+ul.mal li{background:var(--bg3);border-radius:8px;padding:4px 9px;font-size:13.5px}
+ul.rep{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+ul.rep li{display:flex;gap:9px;align-items:flex-start;font-size:15px;line-height:1.45;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.pl{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);font-size:13px;cursor:pointer;display:inline-grid;place-items:center}
+.pl.on{background:var(--bad);color:#fff}
+.etk{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:2px 6px;margin-top:6px;flex:0 0 auto}
+.etk.ikonik{background:var(--warnbg);color:var(--warn)}.etk.bizim{background:var(--infobg);color:var(--info)}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px}
+.btn{border:1px solid var(--line);background:var(--bg3);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:14.5px;font-weight:600;cursor:pointer;display:inline-flex;gap:6px;align-items:baseline;min-height:44px}
+.btn small{font-weight:400;color:inherit;opacity:.75;font-size:12px}
+.btn.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.on{background:var(--bad);color:#fff;border-color:var(--bad)}
+.ucgal{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.ucgal figure{margin:0;border-radius:12px;overflow:hidden;background:var(--bg3)}
+.ucgal img{display:block;width:100%;height:100%;object-fit:cover;aspect-ratio:1;cursor:zoom-in}
+.ucgal figure.wide{grid-column:1/-1}.ucgal figure.wide img{aspect-ratio:16/9}
+.ucgal figcaption{font-size:12px;color:var(--fg3);padding:4px 8px}
+figure.yok .ph{display:grid;place-items:center;aspect-ratio:1;color:var(--fg3);font-size:13px;background:repeating-linear-gradient(45deg,var(--bg3) 0 10px,var(--bg2) 10px 20px)}
+.sur-hero figure.yok .ph{aspect-ratio:9/12}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.gal figure{margin:0;background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.gal img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;cursor:zoom-in}
+.gal figure.g img{aspect-ratio:1}
+.gal figcaption{padding:6px 9px;font-size:13px;font-weight:600;line-height:1.3}
+.galw{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}.galw img{aspect-ratio:16/9}
+.bibs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.bib{background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.bib figure{margin:0}.bib img{display:block;width:100%;aspect-ratio:1;object-fit:cover;cursor:zoom-in}
+.bib h3{font-family:var(--fd);font-size:18px;margin:10px 12px 0}.bib .chips{margin:6px 12px}.bib p{margin:0 12px 12px;font-size:14px;color:var(--fg2);line-height:1.5}
+.mix{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:16px}
+.mix .sel{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+.mix label{display:grid;gap:4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg3)}
+.mix select{font:15px var(--fb);padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);min-height:44px;width:100%}
+.mix .out{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mix .out figure{margin:0;border-radius:12px;overflow:hidden;background:var(--bg3)}
+.mix .out img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.mix .out figure.wide{grid-column:1/-1}.mix .out figure.wide img{aspect-ratio:16/9}
+.mix .out figcaption{font-size:12px;color:var(--fg3);padding:4px 8px}
+.mix .rep{margin-top:12px}
+ul.liste{margin:0;padding:0;list-style:none;display:grid;gap:6px}ul.liste li{display:flex;gap:9px;align-items:center;font-size:15px}
+.fg3{color:var(--fg3)} b.ad{color:var(--accent)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}.tw table{min-width:640px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--stage);color:var(--stage-fg);padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-right,0px));display:none;align-items:center;gap:10px;font-size:14px;box-shadow:0 -6px 24px rgba(0,0,0,.25)}
+.bar.on{display:flex}.bar b{font-family:var(--fd)}.bar .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer;min-height:40px}
+.lb{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.92);display:none;place-items:center;padding:12px}
+.lb.on{display:grid}.lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.lb button{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:14px;background:#fff;color:#000;border:0;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer}
+.not{background:var(--infobg);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--fg2);margin:0 0 14px}
+@media (min-width:760px){ .sur{display:grid;grid-template-columns:minmax(260px,38%) 1fr} .sur-hero img{height:100%;max-height:none;aspect-ratio:9/16} .sur-body{padding:20px 22px} .ucgal{grid-template-columns:1fr 1fr 2fr} .ucgal figure.wide{grid-column:auto} .mix .out{grid-template-columns:1fr 1fr 2fr} .mix .out figure.wide{grid-column:auto} }
+</style>
+</head>
+<body>
+<div class="ck">
+<header class="stage">
+<div class="eyebrow">Çiğ köfte konsepti · 10 sürüm · 7 Kasım 2026</div>
+<h1>Aynı tepsi, on ayrı dünya</h1>
+<p>Kılavuz 05g'deki "acı / az acı" sahnesinin konsept çeşitlemeleri: farklı usta, ortam, tepsi, biber seti, replik, ses rengi ve ortam müziği. Görseller Grok (Cursor üzerinden) ile üretildi; sesler yerel Türkçe seslendirme ve filtre, müzikler kodla sentezlendi. Gerçek bir kişi taklit edilmez.</p>
+<div class="sayac"><span>10 sürüm</span><span>12 biber</span><span>50 replik · 9 ses rengi</span><span>10 müzik döngüsü</span><span>52 görsel</span></div>
+</header>
+<nav class="tabs" id="tabs">
+<a href="#surumler" class="on">Sürümler</a><a href="#karistir">Karıştır</a><a href="#ustalar">Ustalar</a><a href="#tepsiler">Tepsiler</a><a href="#ortamlar">Ortamlar</a><a href="#biberler">Biberler</a><a href="#sesler">Ses · Müzik</a><a href="#tablo">Tablo</a>
+</nav>
+<section id="surumler"><h2>On sürüm</h2><p class="lead">Her kartta: sahne görseli, usta · ortam · tepsi, malzeme seti, beş replik (tek tek dinle), müzik ve diyaloğu birlikte çalan "Sahneyi çal". Görsele dokununca büyür.</p>
+<div class="not">Ses telefonda ilk dokunuştan sonra açılır. Müzik ve diyalog aynı anda tek sahne çalar; başka bir sahneye basınca öncekini durdurur.</div>
+<article class="sur" id="s-urfa" data-id="urfa">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_urfa.jpg" alt="Klasik Urfa Dükkânı" loading="lazy" decoding="async" data-big="img/ck_h_urfa.jpg"></figure><div class="sur-no">01</div></div>
+<div class="sur-body">
+<h3>Klasik Urfa Dükkânı</h3><p class="alt">Taş dükkân, bakır tepsi, isot</p>
+<div class="chips"><span class="chip b">🌶 Urfa isotu</span><span class="chip">Orta, dumanlı</span><span class="chip">🎙 Derin, tok erkek sesi</span><span class="chip">🎵 Sıra gecesi: bağlama + darbuka</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Bıyıklı, kasketli, beyaz önlüklü orta yaşlı Urfalı usta; kolları sıvalı, eldivensiz, yüzük yok</p></div>
+<div><h4>Ortam</h4><p>Urfa çarşısında taş kemerli küçük çiğ köfte dükkânı; duvarda bakır siniler, tezgâhta isot kavanozları, dışarıda akşam ışığı</p></div>
+<div><h4>Tepsi</h4><p>Dövme bakır sini, kenarı kararmış, ortada koyu kırmızı köfte yığını</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>Urfa isotu (kurutulmuş, siyahımsı, yağlı)</li><li>biber salçası</li><li>nar ekşisi</li><li>maydanoz</li><li>taze soğan</li><li>kimyon</li><li>ince bulgur</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/urfa_1.mp3" aria-label="Oynat">▶</button><span class="etk ikonik">ikonik</span> Acı atayım mı abim benim?</li><li><button class="pl" data-ses="ses/urfa_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Hoş geldin <b class=ad>Deniz</b>, adını sininin kenarına yazdım.</li><li><button class="pl" data-ses="ses/urfa_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> İsot Urfa&#x27;dan, nar ekşisi evden; <b class=ad>Deniz</b> acı dedi, bir kepçe daha.</li><li><button class="pl" data-ses="ses/urfa_4.mp3" aria-label="Oynat">▶</button><span class="etk ikonik">ikonik</span> Başımla beraber!</li><li><button class="pl" data-ses="ses/urfa_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Tepsi kıvama geldi, marul sarıyorum, bir dürüm bir ayran.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="urfa" data-muzik="muzik/sira_gecesi.mp3" data-ses="ses/urfa.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/sira_gecesi.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/urfa.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-meksika" data-id="meksika">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_meksika.jpg" alt="Meksika Fiesta Tepsisi" loading="lazy" decoding="async" data-big="img/ck_h_meksika.jpg"></figure><div class="sur-no">02</div></div>
+<div class="sur-body">
+<h3>Meksika Fiesta Tepsisi</h3><p class="alt">Jalapeño, habanero, misket limonu</p>
+<div class="chips"><span class="chip b">🌶 Habanero + chipotle</span><span class="chip">Yüksek, meyvemsi-dumanlı</span><span class="chip">🎙 Genç, parlak</span><span class="chip">🎵 Mariachi: trompet + gitar</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Genç, neşeli usta; önlüğün altında renkli ponço, bilekte örgü bileklik; başında sombrero yok, saçlar bandanalı</p></div>
+<div><h4>Ortam</h4><p>Mexico City tarzı renkli taco tezgâhı; kâğıt bayraklar (papel picado), kaktüs, sarı-pembe duvar</p></div>
+<div><h4>Tepsi</h4><p>El boyaması Talavera seramik büyük tabak, mavi-sarı desenli</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>jalapeño dilimleri</li><li>habanero (turuncu, çok acı)</li><li>chipotle tozu (tütsülenmiş)</li><li>misket limonu</li><li>kişniş</li><li>avokado</li><li>mısır cipsi</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/meksika_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Hola <b class=ad>Deniz</b>! Bugün tepsi Meksika&#x27;ya gidiyor.</li><li><button class="pl" data-ses="ses/meksika_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Habanero mu dedin <b class=ad>Deniz</b>? Cesursun, bir dilim ekliyorum.</li><li><button class="pl" data-ses="ses/meksika_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Chipotle tüttü, misket limonu sıkıldı; <b class=ad>Deniz</b> tepsinin kenarında.</li><li><button class="pl" data-ses="ses/meksika_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Fiesta turu! Mısır cipsiyle sıkma zamanı.</li><li><button class="pl" data-ses="ses/meksika_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> <b class=ad>Deniz</b>, acı 9&#x27;da; su değil, ayran getirin!</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="meksika" data-muzik="muzik/mariachi.mp3" data-ses="ses/meksika.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/mariachi.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/meksika.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-kore" data-id="kore">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_kore.jpg" alt="Seul Isı Kapısı" loading="lazy" decoding="async" data-big="img/ck_h_kore.jpg"></figure><div class="sur-no">03</div></div>
+<div class="sur-body">
+<h3>Seul Isı Kapısı</h3><p class="alt">Gochugaru, gochujang, kimchi</p>
+<div class="chips"><span class="chip b">🌶 Gochugaru + gochujang</span><span class="chip">Orta-yüksek, tatlımsı</span><span class="chip">🎙 Hızlı, enerjik</span><span class="chip">🎵 K-pop elektro: 128 bpm</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Genç, kısa saçlı, siyah şef ceketli usta; eldiven siyah, kolunda küçük dövme yok; ciddi ama gülümser</p></div>
+<div><h4>Ortam</h4><p>Seul gece sokağı; neon tabelalar, buharlı tezgâh, yağmurdan ıslak kaldırım yansımaları</p></div>
+<div><h4>Tepsi</h4><p>Siyah volkanik taş kare tabak, kenarda küçük kimchi kâseleri</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>gochugaru (Kore pul biberi)</li><li>gochujang (fermente biber ezmesi)</li><li>kimchi</li><li>susam yağı</li><li>taze soğan</li><li>susam</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/kore_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Annyeong <b class=ad>Deniz</b>! Tepsiye gochujang giriyor.</li><li><button class="pl" data-ses="ses/kore_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> <b class=ad>Deniz</b> acı dedi; gochugaru bir kaşık, tempo yukarı.</li><li><button class="pl" data-ses="ses/kore_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Kimchi geldi, tepsi fermente oldu; <b class=ad>Deniz</b> listede.</li><li><button class="pl" data-ses="ses/kore_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Isı kapısı açıldı: 10 beğeni, bir kaşık daha.</li><li><button class="pl" data-ses="ses/kore_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Susamla kapatıyoruz, sıkma turu başlıyor.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="kore" data-muzik="muzik/kpop.mp3" data-ses="ses/kore.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/kpop.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/kore.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-hint" data-id="hint">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_hint.jpg" alt="Baharat Pazarı Ocağı" loading="lazy" decoding="async" data-big="img/ck_h_hint.jpg"></figure><div class="sur-no">04</div></div>
+<div class="sur-body">
+<h3>Baharat Pazarı Ocağı</h3><p class="alt">Bhut jolokia, garam masala, bronz thali</p>
+<div class="chips"><span class="chip b">🌶 Bhut jolokia</span><span class="chip">Çok yüksek, tütsülü</span><span class="chip">🎙 Sakin, yankılı</span><span class="chip">🎵 Tabla + tanpura</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Sakallı, güler yüzlü, safran rengi önlüklü usta; bileğinde ip, elinde ahşap kaşık</p></div>
+<div><h4>Ortam</h4><p>Hindistan baharat pazarı; renkli baharat tepeleri, bakır kaplar, sarı tente altı</p></div>
+<div><h4>Tepsi</h4><p>Bronz thali (yuvarlak, bölmeli), çevresinde küçük baharat kâseleri</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>bhut jolokia (hayalet biber)</li><li>garam masala</li><li>zerdeçal</li><li>kişniş tohumu</li><li>taze nane</li><li>yoğurt</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/hint_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Namaste <b class=ad>Deniz</b>, baharat tezgâhına hoş geldin.</li><li><button class="pl" data-ses="ses/hint_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Hayalet biber tek tutam, <b class=ad>Deniz</b>; fazlası tepsiyi yakar.</li><li><button class="pl" data-ses="ses/hint_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Garam masala kokusu geldi mi? <b class=ad>Deniz</b> acı dedi, zerdeçal yanında.</li><li><button class="pl" data-ses="ses/hint_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Nane yoğurt yanında; acı 10 olunca o kurtarır.</li><li><button class="pl" data-ses="ses/hint_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Tepsi hazır, thali dönüyor, sıkma başlıyor.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="hint" data-muzik="muzik/hint.mp3" data-ses="ses/hint.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/hint.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/hint.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-reaper" data-id="reaper">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_reaper.jpg" alt="Reaper Meydan Okuması" loading="lazy" decoding="async" data-big="img/ck_h_reaper.jpg"></figure><div class="sur-no">05</div></div>
+<div class="sur-body">
+<h3>Reaper Meydan Okuması</h3><p class="alt">Carolina Reaper, laboratuvar eldiveni</p>
+<div class="chips"><span class="chip b">🌶 Carolina Reaper</span><span class="chip">Aşırı; yalnız gösteri</span><span class="chip">🎙 Gergin, sıkıştırılmış</span><span class="chip">🎵 Trap gerilim: 808 + hi-hat</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Koruyucu gözlüklü, siyah lastik eldivenli, siyah tişörtlü usta; ter damlaları, meydan okuyan bakış</p></div>
+<div><h4>Ortam</h4><p>Garaj stüdyo; kırmızı LED şerit ışık, duvarda Scoville ölçeği tablosu, masada süt şişeleri</p></div>
+<div><h4>Tepsi</h4><p>Paslanmaz çelik derin tepsi, kenarda uyarı bandı</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>Carolina Reaper (1,6 milyon SHU)</li><li>habanero</li><li>süt</li><li>dondurma</li><li>ekmek</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/reaper_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> <b class=ad>Deniz</b> geldi, kayıt başlıyor; süt masada.</li><li><button class="pl" data-ses="ses/reaper_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Reaper bir tane, bıçak keskin; <b class=ad>Deniz</b> &#x27;at&#x27; dedi.</li><li><button class="pl" data-ses="ses/reaper_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Acı ölçer 9,5; <b class=ad>Deniz</b>, buradan sonrası gösteri.</li><li><button class="pl" data-ses="ses/reaper_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Bu tepsi yenmez, bu tepsi izlenir.</li><li><button class="pl" data-ses="ses/reaper_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Su yok, süt var; dondurma turu açıldı.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="reaper" data-muzik="muzik/trap.mp3" data-ses="ses/reaper.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/trap.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/reaper.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-harran" data-id="harran">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_harran.jpg" alt="Harran Akşamı" loading="lazy" decoding="async" data-big="img/ck_h_harran.jpg"></figure><div class="sur-no">06</div></div>
+<div class="sur-body">
+<h3>Harran Akşamı</h3><p class="alt">Kerpiç ev, tandır, bakır sini</p>
+<div class="chips"><span class="chip b">🌶 Ev isotu</span><span class="chip">Hafif, kokulu</span><span class="chip">🎙 Yaşlı, yavaş, boğuk</span><span class="chip">🎵 Ney + cırcır böceği</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Yaşlı, ak sakallı, nazik dede; başında puşi, elleri kırışık ve sakin</p></div>
+<div><h4>Ortam</h4><p>Harran kerpiç kubbeli ev avlusu; tandır közü, kerosen lamba, akşam mor gökyüzü</p></div>
+<div><h4>Tepsi</h4><p>Eski geniş bakır sini, yer sofrasında, etrafında minderler</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>isot (ev kurutması)</li><li>taze nane</li><li>sumak</li><li>yeşil soğan</li><li>köy bulguru</li><li>sade yağ yok, yalnız salça</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/harran_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Gel <b class=ad>Deniz</b>, otur şuraya, sini büyük.</li><li><button class="pl" data-ses="ses/harran_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Acıyı az koyarım, kokusunu çok; <b class=ad>Deniz</b> öyle ister.</li><li><button class="pl" data-ses="ses/harran_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Nane bizim bahçeden, sumak komşudan.</li><li><button class="pl" data-ses="ses/harran_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Acele yok; kıvam gelince söylerim.</li><li><button class="pl" data-ses="ses/harran_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Hadi, bir lokma <b class=ad>Deniz</b>&#x27;a, bir lokma bana.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="harran" data-muzik="muzik/koy.mp3" data-ses="ses/harran.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/koy.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/harran.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-sahil" data-id="sahil">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_sahil.jpg" alt="Sahil Yazlığı" loading="lazy" decoding="async" data-big="img/ck_h_sahil.jpg"></figure><div class="sur-no">07</div></div>
+<div class="sur-body">
+<h3>Sahil Yazlığı</h3><p class="alt">Hasır tabla, limon, bol marul</p>
+<div class="chips"><span class="chip b">🌶 Az isot</span><span class="chip">Düşük, ekşi-ferah</span><span class="chip">🎙 Rahat, yankılı</span><span class="chip">🎵 Reggae-chill + dalga</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Genç, bronz tenli, keten gömlekli usta; gözlük alnında, ayaklar çıplak kumda</p></div>
+<div><h4>Ortam</h4><p>Ege sahili gün batımı; ahşap iskele, hasır şemsiye, arkada tekneler</p></div>
+<div><h4>Tepsi</h4><p>Hasır tabla üstünde geniş seramik tabak, kenarında limon dilimleri</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>taze limon</li><li>nar ekşisi</li><li>bol marul</li><li>roka</li><li>az isot</li><li>zeytinyağı</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/sahil_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Selam <b class=ad>Deniz</b>, güneş batıyor, tepsi serin.</li><li><button class="pl" data-ses="ses/sahil_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Limon bol, isot az; <b class=ad>Deniz</b> &#x27;az acı&#x27; dedi, tam yerinde.</li><li><button class="pl" data-ses="ses/sahil_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Marul sardım, nar ekşisi damladı, <b class=ad>Deniz</b> iskelede.</li><li><button class="pl" data-ses="ses/sahil_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Dalga sesine karşı yoğuruyoruz, acele yok.</li><li><button class="pl" data-ses="ses/sahil_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Roka turu: on beğeni, bir avuç roka.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="sahil" data-muzik="muzik/sahil.mp3" data-ses="ses/sahil.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/sahil.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/sahil.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-gece" data-id="gece">
+<div class="sur-hero"><figure class="hero"><img src="img/ck_h_gece.jpg" alt="Gece Vardiyası Taksi Tepsisi" loading="lazy" decoding="async" data-big="img/ck_h_gece.jpg"></figure><div class="sur-no">08</div></div>
+<div class="sur-body">
+<h3>Gece Vardiyası Taksi Tepsisi</h3><p class="alt">Araç içi tepsi, Maraş biberi, neon</p>
+<div class="chips"><span class="chip b">🌶 Maraş pul biberi</span><span class="chip">Orta, keskin</span><span class="chip">🎙 Derin, tok erkek sesi</span><span class="chip">🎵 Arabesk synth yaylılar</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Orta yaşlı, deri ceketli, tesbihli şoför-usta; direksiyonun yanında küçük tepsi</p></div>
+<div><h4>Ortam</h4><p>İstanbul gece; taksi içi, torpidoda tepsi, camlarda neon yansımaları ve yağmur</p></div>
+<div><h4>Tepsi</h4><p>Küçük yuvarlak çelik tepsi, torpido üstünde kaymaz altlıkla</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>Maraş biberi</li><li>salça</li><li>nar ekşisi</li><li>tursu</li><li>lavaş</li><li>ayran kutusu</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/gece_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Nereye <b class=ad>Deniz</b>? Tepsi arka koltukta.</li><li><button class="pl" data-ses="ses/gece_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Maraş biberi kırmızı ışıkta atılır, yeşilde yoğrulur.</li><li><button class="pl" data-ses="ses/gece_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> <b class=ad>Deniz</b> acı dedi, taksimetre acıyı yazdı.</li><li><button class="pl" data-ses="ses/gece_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Yağmur başladı, lavaş hazır, dürüm sırada.</li><li><button class="pl" data-ses="ses/gece_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Bu durakta iniş yok, bir sıkma daha.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="gece" data-muzik="muzik/arabesk.mp3" data-ses="ses/gece.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/arabesk.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/gece.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-uzay" data-id="uzay">
+<div class="sur-hero"><figure class="hero yok"><div class="ph">görsel üretiliyor</div></figure><div class="sur-no">09</div></div>
+<div class="sur-body">
+<h3>Yörünge Mutfağı</h3><p class="alt">Yerçekimsiz isot, astronot usta</p>
+<div class="chips"><span class="chip b">🌶 İsot tozu</span><span class="chip">Orta, kuru</span><span class="chip">🎙 Telsiz filtreli</span><span class="chip">🎵 Ambient synth pad</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Beyaz uzay tulumlu, kaskı açık, genç ve şaşkın gülümseyen usta</p></div>
+<div><h4>Ortam</h4><p>Uzay istasyonu modülü; pencereden Dünya, havada süzülen isot taneleri ve bulgur</p></div>
+<div><h4>Tepsi</h4><p>Mıknatıslı metal tepsi, kenarları yüksek, köfte filelerle tutulmuş</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>isot tozu (kapsülde)</li><li>dondurulmuş kurutulmuş nar ekşisi</li><li>tüp salça</li><li>vakumlu bulgur</li><li>su torbası</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/uzay_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Houston, <b class=ad>Deniz</b> modüle bağlandı.</li><li><button class="pl" data-ses="ses/uzay_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> İsot serbest düşüşte; <b class=ad>Deniz</b> &#x27;acı&#x27; dedi, kapsül açıldı.</li><li><button class="pl" data-ses="ses/uzay_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Bulgur süzülüyor, file kapat, yoğurmaya devam.</li><li><button class="pl" data-ses="ses/uzay_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Yerçekimi yok, iştah var.</li><li><button class="pl" data-ses="ses/uzay_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Yörünge turu tamam, sıkma için manyetik tepsi kilitli.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="uzay" data-muzik="muzik/uzay.mp3" data-ses="ses/uzay.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/uzay.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/uzay.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article><article class="sur" id="s-avlu" data-id="avlu">
+<div class="sur-hero"><figure class="hero yok"><div class="ph">görsel üretiliyor</div></figure><div class="sur-no">10</div></div>
+<div class="sur-body">
+<h3>Avlu Anne Tarifi</h3><p class="alt">Emaye tepsi, ceviz, asma gölgesi</p>
+<div class="chips"><span class="chip b">🌶 İsot + salça</span><span class="chip">Orta, cevizli-tatlı</span><span class="chip">🎙 Sıcak kadın sesi</span><span class="chip">🎵 Bağlama türkü + def</span></div>
+<div class="row3">
+<div><h4>Usta</h4><p>Başı tülbentli, güler yüzlü, elli yaşlarında Urfalı kadın usta; önlük çiçekli, kolları sıvalı</p></div>
+<div><h4>Ortam</h4><p>Taş avlu; asma gölgesi, duvarda kurutulmuş biber dizileri, ortada tahta masa</p></div>
+<div><h4>Tepsi</h4><p>Beyaz emaye tepsi, kenarı mavi, üzerinde yoğrulmuş köfte</p></div>
+</div>
+<h4>Malzemeler</h4><ul class="mal"><li>isot</li><li>biber salçası</li><li>dövülmüş ceviz</li><li>maydanoz</li><li>sarımsak</li><li>kimyon</li><li>nar ekşisi</li></ul>
+<h4>Replikler <small>(izleyici adı yerine örnek: Deniz)</small></h4><ul class="rep"><li><button class="pl" data-ses="ses/avlu_1.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Hoş geldin <b class=ad>Deniz</b> evladım, ellerini yıka gel.</li><li><button class="pl" data-ses="ses/avlu_2.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Ceviz anamın tarifi; acıyı <b class=ad>Deniz</b> kadar koyarım.</li><li><button class="pl" data-ses="ses/avlu_3.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Salçayı avuçla, isotu tutamla; öğren bak.</li><li><button class="pl" data-ses="ses/avlu_4.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Asma gölgesi serin, tepsi sıcak, sabır kıvam getirir.</li><li><button class="pl" data-ses="ses/avlu_5.mp3" aria-label="Oynat">▶</button><span class="etk bizim">bizim</span> Al <b class=ad>Deniz</b>, ilk sıkma senin.</li></ul>
+<div class="ctl">
+<button class="btn p" data-sahne="avlu" data-muzik="muzik/turku.mp3" data-ses="ses/avlu.mp3">▶ Sahneyi çal <small>müzik + diyalog</small></button>
+<button class="btn" data-muzikonly="muzik/turku.mp3">🎵 Yalnız müzik</button>
+<button class="btn" data-sesonly="ses/avlu.mp3">🎙 Yalnız diyalog</button>
+</div>
+<div class="ucgal"><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Usta</figcaption></figure><figure class="sq yok"><div class="ph">görsel üretiliyor</div><figcaption>Tepsi</figcaption></figure><figure class="wide yok"><div class="ph">görsel üretiliyor</div><figcaption>Ortam</figcaption></figure></div>
+</div></article>
+</section>
+<section id="karistir"><h2>Karıştır: kendi sürümünü kur</h2><p class="lead">Usta, tepsi, ortam, replik takımı, ses rengi ve müziği ayrı ayrı seç; sahneyi çal.</p>
+<div class="mix">
+<div class="sel">
+<label>Usta<select id="mx-u"><option value="urfa">Klasik Urfa Dükkânı</option><option value="meksika">Meksika Fiesta Tepsisi</option><option value="kore">Seul Isı Kapısı</option><option value="hint">Baharat Pazarı Ocağı</option><option value="reaper">Reaper Meydan Okuması</option><option value="harran">Harran Akşamı</option><option value="sahil">Sahil Yazlığı</option><option value="gece">Gece Vardiyası Taksi Tepsisi</option><option value="uzay">Yörünge Mutfağı</option><option value="avlu">Avlu Anne Tarifi</option></select></label>
+<label>Tepsi<select id="mx-t"><option value="urfa">Klasik Urfa Dükkânı</option><option value="meksika">Meksika Fiesta Tepsisi</option><option value="kore">Seul Isı Kapısı</option><option value="hint">Baharat Pazarı Ocağı</option><option value="reaper">Reaper Meydan Okuması</option><option value="harran">Harran Akşamı</option><option value="sahil">Sahil Yazlığı</option><option value="gece">Gece Vardiyası Taksi Tepsisi</option><option value="uzay">Yörünge Mutfağı</option><option value="avlu">Avlu Anne Tarifi</option></select></label>
+<label>Ortam<select id="mx-o"><option value="urfa">Klasik Urfa Dükkânı</option><option value="meksika">Meksika Fiesta Tepsisi</option><option value="kore">Seul Isı Kapısı</option><option value="hint">Baharat Pazarı Ocağı</option><option value="reaper">Reaper Meydan Okuması</option><option value="harran">Harran Akşamı</option><option value="sahil">Sahil Yazlığı</option><option value="gece">Gece Vardiyası Taksi Tepsisi</option><option value="uzay">Yörünge Mutfağı</option><option value="avlu">Avlu Anne Tarifi</option></select></label>
+<label>Replik + ses<select id="mx-r"><option value="urfa">Klasik Urfa Dükkânı</option><option value="meksika">Meksika Fiesta Tepsisi</option><option value="kore">Seul Isı Kapısı</option><option value="hint">Baharat Pazarı Ocağı</option><option value="reaper">Reaper Meydan Okuması</option><option value="harran">Harran Akşamı</option><option value="sahil">Sahil Yazlığı</option><option value="gece">Gece Vardiyası Taksi Tepsisi</option><option value="uzay">Yörünge Mutfağı</option><option value="avlu">Avlu Anne Tarifi</option></select></label>
+<label>Müzik<select id="mx-m"><option value="urfa">Klasik Urfa Dükkânı</option><option value="meksika">Meksika Fiesta Tepsisi</option><option value="kore">Seul Isı Kapısı</option><option value="hint">Baharat Pazarı Ocağı</option><option value="reaper">Reaper Meydan Okuması</option><option value="harran">Harran Akşamı</option><option value="sahil">Sahil Yazlığı</option><option value="gece">Gece Vardiyası Taksi Tepsisi</option><option value="uzay">Yörünge Mutfağı</option><option value="avlu">Avlu Anne Tarifi</option></select></label>
+</div>
+<div class="out"><figure><img id="mx-iu" alt="Usta"><figcaption id="mx-cu"></figcaption></figure><figure><img id="mx-it" alt="Tepsi"><figcaption id="mx-ct"></figcaption></figure><figure class="wide"><img id="mx-io" alt="Ortam"><figcaption id="mx-co"></figcaption></figure></div>
+<ul class="rep" id="mx-rep"></ul>
+<div class="ctl"><button class="btn p" id="mx-play">▶ Karışımı çal <small>seçili müzik + diyalog</small></button><button class="btn" id="mx-rnd">🎲 Rastgele</button></div>
+</div>
+</section>
+<section id="ustalar"><h2>Ustalar</h2><p class="lead">On karakter; hepsi genel tip, gerçek kişi yok.</p><div class="gal"><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Klasik Urfa Dükkânı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Meksika Fiesta Tepsisi</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Seul Isı Kapısı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Baharat Pazarı Ocağı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Reaper Meydan Okuması</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Harran Akşamı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Sahil Yazlığı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Gece Vardiyası Taksi Tepsisi</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Yörünge Mutfağı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Avlu Anne Tarifi</figcaption></figure></div></section>
+<section id="tepsiler"><h2>Tepsiler ve sunum</h2><p class="lead">Bakır sini, Talavera seramik, volkanik taş, bronz thali, çelik, hasır tabla, emaye…</p><div class="gal"><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Klasik Urfa Dükkânı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Meksika Fiesta Tepsisi</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Seul Isı Kapısı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Baharat Pazarı Ocağı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Reaper Meydan Okuması</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Harran Akşamı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Sahil Yazlığı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Gece Vardiyası Taksi Tepsisi</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Yörünge Mutfağı</figcaption></figure><figure class="g yok"><div class="ph">görsel üretiliyor</div><figcaption>Avlu Anne Tarifi</figcaption></figure></div></section>
+<section id="ortamlar"><h2>Ortamlar</h2><p class="lead">Yayının açılacağı mekân; tepsi boş, izleyici gelince dolacak.</p><div class="gal galw"><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Klasik Urfa Dükkânı</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Meksika Fiesta Tepsisi</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Seul Isı Kapısı</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Baharat Pazarı Ocağı</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Reaper Meydan Okuması</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Harran Akşamı</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Sahil Yazlığı</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Gece Vardiyası Taksi Tepsisi</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Yörünge Mutfağı</figcaption></figure><figure class="gw yok"><div class="ph">görsel üretiliyor</div><figcaption>Avlu Anne Tarifi</figcaption></figure></div></section>
+<section id="biberler"><h2>Biber kütüphanesi</h2><p class="lead">Yalnız isot değil: 12 biber ve ezme, acılık (Scoville) ve tepsiye ne kattığı. SHU değerleri yaklaşık aralıklardır.</p><div class="bibs"><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Urfa isotu</h3><div class="chips"><span class="chip">Şanlıurfa</span><span class="chip b">30–50 bin SHU</span></div><p>Güneşte kurutulup gece örtülerek kararır; dumanlı, hafif ekşi, yağlı. Çiğ köftenin omurgası.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Maraş pul biberi</h3><div class="chips"><span class="chip">Kahramanmaraş</span><span class="chip b">10–30 bin SHU</span></div><p>Parlak kırmızı, tuzlu-yağlı; keskin, çabuk gelen acı.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Jalapeño</h3><div class="chips"><span class="chip">Meksika</span><span class="chip b">2,5–8 bin SHU</span></div><p>Yeşil, sulu, çıtır; dilim dilim tepsiye. Hafif acı, çimenimsi.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Habanero</h3><div class="chips"><span class="chip">Yucatán</span><span class="chip b">100–350 bin SHU</span></div><p>Turuncu fener biçimli, meyvemsi; bir tanesi tepsiyi değiştirir.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Chipotle</h3><div class="chips"><span class="chip">Meksika</span><span class="chip b">5–10 bin SHU</span></div><p>Tütsülenmiş kurutulmuş jalapeño; is kokusu isotla kardeş.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Gochugaru</h3><div class="chips"><span class="chip">Kore</span><span class="chip b">1,5–10 bin SHU</span></div><p>Kaba, parlak kırmızı, tatlımsı; gochujang ile fermente derinlik.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Bhut jolokia (hayalet biber)</h3><div class="chips"><span class="chip">Assam, Hindistan</span><span class="chip b">≈1 milyon SHU</span></div><p>Yavaş başlar, uzun sürer; bir tutam yeter.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Carolina Reaper</h3><div class="chips"><span class="chip">ABD</span><span class="chip b">≈1,6 milyon SHU</span></div><p>Kuyruklu, buruşuk; yalnız meydan okuma gösterisi için; yanında süt.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Sichuan biberi</h3><div class="chips"><span class="chip">Çin</span><span class="chip b">acı değil, uyuşturur SHU</span></div><p>Dil uyuşması (málà); isotla birlikte &#x27;uyuşturan acı&#x27; tepsi.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Ají amarillo</h3><div class="chips"><span class="chip">Peru</span><span class="chip b">30–50 bin SHU</span></div><p>Sarı-turuncu, meyvemsi; nar ekşisiyle şaşırtıcı uyum.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Peri peri</h3><div class="chips"><span class="chip">Mozambik / Portekiz</span><span class="chip b">50–175 bin SHU</span></div><p>Küçük, parlak, limonlu-sarımsaklı sosla.</p></article><article class="bib"><figure class="sq yok"><div class="ph">görsel üretiliyor</div></figure><h3>Harissa</h3><div class="chips"><span class="chip">Tunus</span><span class="chip b">5–20 bin (ezme) SHU</span></div><p>Kimyon, kişniş, sarımsaklı kırmızı ezme; salçanın yerine denenebilir.</p></article></div></section>
+<section id="sesler"><h2>Ses renkleri ve müzikler</h2><p class="lead">Dokuz ses profili (tek yerel sesin perde, hız ve filtre çeşitlemeleri) ve on müzik döngüsü (24 sn, döngüde çalar).</p>
+<div class="row3"><div><h4>Ses renkleri</h4><ul class="liste"><li><button class="pl" data-sesonly="ses/urfa_1.mp3">▶</button> <b>Derin, tok erkek sesi</b> <span class="fg3">· Klasik Urfa Dükkânı</span></li><li><button class="pl" data-sesonly="ses/meksika_1.mp3">▶</button> <b>Genç, parlak</b> <span class="fg3">· Meksika Fiesta Tepsisi</span></li><li><button class="pl" data-sesonly="ses/kore_1.mp3">▶</button> <b>Hızlı, enerjik</b> <span class="fg3">· Seul Isı Kapısı</span></li><li><button class="pl" data-sesonly="ses/hint_1.mp3">▶</button> <b>Sakin, yankılı</b> <span class="fg3">· Baharat Pazarı Ocağı</span></li><li><button class="pl" data-sesonly="ses/reaper_1.mp3">▶</button> <b>Gergin, sıkıştırılmış</b> <span class="fg3">· Reaper Meydan Okuması</span></li><li><button class="pl" data-sesonly="ses/harran_1.mp3">▶</button> <b>Yaşlı, yavaş, boğuk</b> <span class="fg3">· Harran Akşamı</span></li><li><button class="pl" data-sesonly="ses/sahil_1.mp3">▶</button> <b>Rahat, yankılı</b> <span class="fg3">· Sahil Yazlığı</span></li><li><button class="pl" data-sesonly="ses/gece_1.mp3">▶</button> <b>Derin, tok erkek sesi</b> <span class="fg3">· Gece Vardiyası Taksi Tepsisi</span></li><li><button class="pl" data-sesonly="ses/uzay_1.mp3">▶</button> <b>Telsiz filtreli</b> <span class="fg3">· Yörünge Mutfağı</span></li><li><button class="pl" data-sesonly="ses/avlu_1.mp3">▶</button> <b>Sıcak kadın sesi</b> <span class="fg3">· Avlu Anne Tarifi</span></li></ul></div><div><h4>Müzikler</h4><ul class="liste"><li><button class="pl" data-muzikonly="muzik/sira_gecesi.mp3">▶</button> <b>Sıra gecesi: bağlama + darbuka</b> <span class="fg3">· Klasik Urfa Dükkânı</span></li><li><button class="pl" data-muzikonly="muzik/mariachi.mp3">▶</button> <b>Mariachi: trompet + gitar</b> <span class="fg3">· Meksika Fiesta Tepsisi</span></li><li><button class="pl" data-muzikonly="muzik/kpop.mp3">▶</button> <b>K-pop elektro: 128 bpm</b> <span class="fg3">· Seul Isı Kapısı</span></li><li><button class="pl" data-muzikonly="muzik/hint.mp3">▶</button> <b>Tabla + tanpura</b> <span class="fg3">· Baharat Pazarı Ocağı</span></li><li><button class="pl" data-muzikonly="muzik/trap.mp3">▶</button> <b>Trap gerilim: 808 + hi-hat</b> <span class="fg3">· Reaper Meydan Okuması</span></li><li><button class="pl" data-muzikonly="muzik/koy.mp3">▶</button> <b>Ney + cırcır böceği</b> <span class="fg3">· Harran Akşamı</span></li><li><button class="pl" data-muzikonly="muzik/sahil.mp3">▶</button> <b>Reggae-chill + dalga</b> <span class="fg3">· Sahil Yazlığı</span></li><li><button class="pl" data-muzikonly="muzik/arabesk.mp3">▶</button> <b>Arabesk synth yaylılar</b> <span class="fg3">· Gece Vardiyası Taksi Tepsisi</span></li><li><button class="pl" data-muzikonly="muzik/uzay.mp3">▶</button> <b>Ambient synth pad</b> <span class="fg3">· Yörünge Mutfağı</span></li><li><button class="pl" data-muzikonly="muzik/turku.mp3">▶</button> <b>Bağlama türkü + def</b> <span class="fg3">· Avlu Anne Tarifi</span></li></ul></div></div>
+<p class="not" style="margin-top:14px">Gerçek yayında: müzik telifsiz/kendi üretim olmalı (bu döngüler bizim); ses için ElevenLabs ya da Piper (yerel) ile farklı karakter sesleri üretilebilir. Yüz ve ses taklidi yok.</p>
+</section>
+<section id="tablo"><h2>Karşılaştırma</h2><div class="tw"><table><tr><th>#</th><th>Sürüm</th><th>Biber</th><th>Sıcaklık</th><th>Ses</th><th>Müzik</th><th>Tepsi</th></tr><tr><td>01</td><td><b>Klasik Urfa Dükkânı</b></td><td>Urfa isotu</td><td>Orta, dumanlı</td><td>Derin, tok erkek sesi</td><td>Sıra gecesi: bağlama + darbuka</td><td>Dövme bakır sini</td></tr><tr><td>02</td><td><b>Meksika Fiesta Tepsisi</b></td><td>Habanero + chipotle</td><td>Yüksek, meyvemsi-dumanlı</td><td>Genç, parlak</td><td>Mariachi: trompet + gitar</td><td>El boyaması Talavera seramik büyük tabak</td></tr><tr><td>03</td><td><b>Seul Isı Kapısı</b></td><td>Gochugaru + gochujang</td><td>Orta-yüksek, tatlımsı</td><td>Hızlı, enerjik</td><td>K-pop elektro: 128 bpm</td><td>Siyah volkanik taş kare tabak</td></tr><tr><td>04</td><td><b>Baharat Pazarı Ocağı</b></td><td>Bhut jolokia</td><td>Çok yüksek, tütsülü</td><td>Sakin, yankılı</td><td>Tabla + tanpura</td><td>Bronz thali (yuvarlak</td></tr><tr><td>05</td><td><b>Reaper Meydan Okuması</b></td><td>Carolina Reaper</td><td>Aşırı; yalnız gösteri</td><td>Gergin, sıkıştırılmış</td><td>Trap gerilim: 808 + hi-hat</td><td>Paslanmaz çelik derin tepsi</td></tr><tr><td>06</td><td><b>Harran Akşamı</b></td><td>Ev isotu</td><td>Hafif, kokulu</td><td>Yaşlı, yavaş, boğuk</td><td>Ney + cırcır böceği</td><td>Eski geniş bakır sini</td></tr><tr><td>07</td><td><b>Sahil Yazlığı</b></td><td>Az isot</td><td>Düşük, ekşi-ferah</td><td>Rahat, yankılı</td><td>Reggae-chill + dalga</td><td>Hasır tabla üstünde geniş seramik tabak</td></tr><tr><td>08</td><td><b>Gece Vardiyası Taksi Tepsisi</b></td><td>Maraş pul biberi</td><td>Orta, keskin</td><td>Derin, tok erkek sesi</td><td>Arabesk synth yaylılar</td><td>Küçük yuvarlak çelik tepsi</td></tr><tr><td>09</td><td><b>Yörünge Mutfağı</b></td><td>İsot tozu</td><td>Orta, kuru</td><td>Telsiz filtreli</td><td>Ambient synth pad</td><td>Mıknatıslı metal tepsi</td></tr><tr><td>10</td><td><b>Avlu Anne Tarifi</b></td><td>İsot + salça</td><td>Orta, cevizli-tatlı</td><td>Sıcak kadın sesi</td><td>Bağlama türkü + def</td><td>Beyaz emaye tepsi</td></tr></table></div>
+<p class="small" style="color:var(--fg3);margin-top:12px">Kaynak dosyalar: <code>web4/ck/surumler.json</code> (tek doğruluk kaynağı), <code>muzik.py</code>, <code>ses.py</code>, <code>build_ck.py</code>. <a href="../index.html">← Belge seti</a> · <a href="../belgeler/kilavuz.html#cigkofterehber">Kılavuz 05g</a></p>
+</section>
+</div>
+<div class="bar" id="bar"><span class="t"><b id="bar-t"></b> <span id="bar-s"></span></span><button id="bar-stop">■ Durdur</button></div>
+<div class="lb" id="lb"><button id="lb-x" aria-label="Kapat">×</button><img id="lb-img" alt=""></div>
+<script>
+var D={"urfa": {"ad": "Klasik Urfa Dükkânı", "muzik": "sira_gecesi", "muzik_ad": "Sıra gecesi: bağlama + darbuka", "replik": [["ikonik", "Acı atayım mı abim benim?"], ["bizim", "Hoş geldin {ad}, adını sininin kenarına yazdım."], ["bizim", "İsot Urfa'dan, nar ekşisi evden; {ad} acı dedi, bir kepçe daha."], ["ikonik", "Başımla beraber!"], ["bizim", "Tepsi kıvama geldi, marul sarıyorum, bir dürüm bir ayran."]], "ses": "Derin, tok erkek sesi"}, "meksika": {"ad": "Meksika Fiesta Tepsisi", "muzik": "mariachi", "muzik_ad": "Mariachi: trompet + gitar", "replik": [["bizim", "Hola {ad}! Bugün tepsi Meksika'ya gidiyor."], ["bizim", "Habanero mu dedin {ad}? Cesursun, bir dilim ekliyorum."], ["bizim", "Chipotle tüttü, misket limonu sıkıldı; {ad} tepsinin kenarında."], ["bizim", "Fiesta turu! Mısır cipsiyle sıkma zamanı."], ["bizim", "{ad}, acı 9'da; su değil, ayran getirin!"]], "ses": "Genç, parlak"}, "kore": {"ad": "Seul Isı Kapısı", "muzik": "kpop", "muzik_ad": "K-pop elektro: 128 bpm", "replik": [["bizim", "Annyeong {ad}! Tepsiye gochujang giriyor."], ["bizim", "{ad} acı dedi; gochugaru bir kaşık, tempo yukarı."], ["bizim", "Kimchi geldi, tepsi fermente oldu; {ad} listede."], ["bizim", "Isı kapısı açıldı: 10 beğeni, bir kaşık daha."], ["bizim", "Susamla kapatıyoruz, sıkma turu başlıyor."]], "ses": "Hızlı, enerjik"}, "hint": {"ad": "Baharat Pazarı Ocağı", "muzik": "hint", "muzik_ad": "Tabla + tanpura", "replik": [["bizim", "Namaste {ad}, baharat tezgâhına hoş geldin."], ["bizim", "Hayalet biber tek tutam, {ad}; fazlası tepsiyi yakar."], ["bizim", "Garam masala kokusu geldi mi? {ad} acı dedi, zerdeçal yanında."], ["bizim", "Nane yoğurt yanında; acı 10 olunca o kurtarır."], ["bizim", "Tepsi hazır, thali dönüyor, sıkma başlıyor."]], "ses": "Sakin, yankılı"}, "reaper": {"ad": "Reaper Meydan Okuması", "muzik": "trap", "muzik_ad": "Trap gerilim: 808 + hi-hat", "replik": [["bizim", "{ad} geldi, kayıt başlıyor; süt masada."], ["bizim", "Reaper bir tane, bıçak keskin; {ad} 'at' dedi."], ["bizim", "Acı ölçer 9,5; {ad}, buradan sonrası gösteri."], ["bizim", "Bu tepsi yenmez, bu tepsi izlenir."], ["bizim", "Su yok, süt var; dondurma turu açıldı."]], "ses": "Gergin, sıkıştırılmış"}, "harran": {"ad": "Harran Akşamı", "muzik": "koy", "muzik_ad": "Ney + cırcır böceği", "replik": [["bizim", "Gel {ad}, otur şuraya, sini büyük."], ["bizim", "Acıyı az koyarım, kokusunu çok; {ad} öyle ister."], ["bizim", "Nane bizim bahçeden, sumak komşudan."], ["bizim", "Acele yok; kıvam gelince söylerim."], ["bizim", "Hadi, bir lokma {ad}'a, bir lokma bana."]], "ses": "Yaşlı, yavaş, boğuk"}, "sahil": {"ad": "Sahil Yazlığı", "muzik": "sahil", "muzik_ad": "Reggae-chill + dalga", "replik": [["bizim", "Selam {ad}, güneş batıyor, tepsi serin."], ["bizim", "Limon bol, isot az; {ad} 'az acı' dedi, tam yerinde."], ["bizim", "Marul sardım, nar ekşisi damladı, {ad} iskelede."], ["bizim", "Dalga sesine karşı yoğuruyoruz, acele yok."], ["bizim", "Roka turu: on beğeni, bir avuç roka."]], "ses": "Rahat, yankılı"}, "gece": {"ad": "Gece Vardiyası Taksi Tepsisi", "muzik": "arabesk", "muzik_ad": "Arabesk synth yaylılar", "replik": [["bizim", "Nereye {ad}? Tepsi arka koltukta."], ["bizim", "Maraş biberi kırmızı ışıkta atılır, yeşilde yoğrulur."], ["bizim", "{ad} acı dedi, taksimetre acıyı yazdı."], ["bizim", "Yağmur başladı, lavaş hazır, dürüm sırada."], ["bizim", "Bu durakta iniş yok, bir sıkma daha."]], "ses": "Derin, tok erkek sesi"}, "uzay": {"ad": "Yörünge Mutfağı", "muzik": "uzay", "muzik_ad": "Ambient synth pad", "replik": [["bizim", "Houston, {ad} modüle bağlandı."], ["bizim", "İsot serbest düşüşte; {ad} 'acı' dedi, kapsül açıldı."], ["bizim", "Bulgur süzülüyor, file kapat, yoğurmaya devam."], ["bizim", "Yerçekimi yok, iştah var."], ["bizim", "Yörünge turu tamam, sıkma için manyetik tepsi kilitli."]], "ses": "Telsiz filtreli"}, "avlu": {"ad": "Avlu Anne Tarifi", "muzik": "turku", "muzik_ad": "Bağlama türkü + def", "replik": [["bizim", "Hoş geldin {ad} evladım, ellerini yıka gel."], ["bizim", "Ceviz anamın tarifi; acıyı {ad} kadar koyarım."], ["bizim", "Salçayı avuçla, isotu tutamla; öğren bak."], ["bizim", "Asma gölgesi serin, tepsi sıcak, sabır kıvam getirir."], ["bizim", "Al {ad}, ilk sıkma senin."]], "ses": "Sıcak kadın sesi"}};
+var mus=new Audio(), voc=new Audio(); mus.loop=true; mus.preload='none'; voc.preload='none';
+var bar=document.getElementById('bar'), barT=document.getElementById('bar-t'), barS=document.getElementById('bar-s');
+var onBtn=null;
+function stopAll(){ mus.pause(); voc.pause(); mus.currentTime=0; voc.currentTime=0; bar.classList.remove('on'); if(onBtn){onBtn.classList.remove('on');onBtn=null;} document.querySelectorAll('.pl.on').forEach(function(b){b.classList.remove('on')}); }
+function play(opts,btn,title,sub){ var same=(onBtn===btn); stopAll(); if(same) return; onBtn=btn; btn&&btn.classList.add('on'); barT.textContent=title||''; barS.textContent=sub||''; bar.classList.add('on');
+  if(opts.m){ mus.src=opts.m; mus.volume=opts.v?0.35:0.8; mus.play().catch(function(){}); }
+  if(opts.v){ voc.src=opts.v; voc.volume=1; voc.play().catch(function(){}); voc.onended=function(){ if(opts.m){ mus.volume=0.8; barS.textContent='diyalog bitti · müzik döngüde'; } else stopAll(); }; }
+}
+document.getElementById('bar-stop').onclick=stopAll;
+document.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.sahne){ var s=D[b.dataset.sahne]; play({m:b.dataset.muzik,v:b.dataset.ses},b,s.ad,s.muzik_ad+' · '+s.ses); }
+  else if(b.dataset.muzikonly){ play({m:b.dataset.muzikonly},b,'Müzik',b.dataset.muzikonly.split('/').pop().replace('.mp3','')); }
+  else if(b.dataset.sesonly){ play({v:b.dataset.sesonly},b,'Diyalog',''); }
+  else if(b.dataset.ses){ play({v:b.dataset.ses},b,'Replik',b.parentNode.textContent.trim().slice(0,60)); }
+});
+/* büyüt */
+var lb=document.getElementById('lb'), lbi=document.getElementById('lb-img');
+document.addEventListener('click',function(e){ var im=e.target.closest('img[data-big]'); if(im){ lbi.src=im.dataset.big; lbi.alt=im.alt; lb.classList.add('on'); } });
+lb.addEventListener('click',function(){ lb.classList.remove('on'); lbi.src=''; });
+document.querySelectorAll('.mix .out img').forEach(function(im){ im.onerror=function(){im.classList.add('yok');im.parentNode.classList.add('yok')}; im.onload=function(){im.classList.remove('yok');im.parentNode.classList.remove('yok')}; });
+/* sekme vurgusu */
+var tabs=[].slice.call(document.querySelectorAll('#tabs a')); var map={}; tabs.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});
+if('IntersectionObserver' in window){ var cur=tabs[0]; var io=new IntersectionObserver(function(es){ es.forEach(function(x){ if(x.isIntersecting&&map[x.target.id]){ cur.classList.remove('on'); cur=map[x.target.id]; cur.classList.add('on'); cur.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'}); } }); },{rootMargin:'-15% 0px -75% 0px'}); document.querySelectorAll('.ck section[id]').forEach(function(s){io.observe(s)}); }
+/* karıştır */
+var ids=Object.keys(D); function $(i){return document.getElementById(i)}
+function mix(){ var u=$('mx-u').value,t=$('mx-t').value,o=$('mx-o').value,r=$('mx-r').value,m=$('mx-m').value;
+  $('mx-iu').src='img/ck_u_'+u+'.jpg'; $('mx-cu').textContent='Usta · '+D[u].ad; $('mx-it').src='img/ck_t_'+t+'.jpg'; $('mx-ct').textContent='Tepsi · '+D[t].ad; $('mx-io').src='img/ck_o_'+o+'.jpg'; $('mx-co').textContent='Ortam · '+D[o].ad;
+  $('mx-rep').innerHTML=D[r].replik.map(function(x,i){ return '<li><button class="pl" data-ses="ses/'+r+'_'+(i+1)+'.mp3">▶</button><span class="etk '+x[0]+'">'+x[0]+'</span> '+x[1].replace('{ad}','<b class=ad>Deniz</b>')+'</li>'; }).join('');
+  $('mx-play').onclick=function(){ play({m:'muzik/'+D[m].muzik+'.mp3',v:'ses/'+r+'.mp3'},this,'Karışım',D[u].ad.split(' ')[0]+' ustası · '+D[m].muzik_ad); };
+}
+['mx-u','mx-t','mx-o','mx-r','mx-m'].forEach(function(i,k){ $(i).addEventListener('change',mix); $(i).selectedIndex=[0,1,2,3,4][k]%ids.length; });
+$('mx-rnd').onclick=function(){ ['mx-u','mx-t','mx-o','mx-r','mx-m'].forEach(function(i){ $(i).selectedIndex=Math.floor(Math.random()*ids.length); }); mix(); };
+mix();
+</script>
+</body>
+</html>
