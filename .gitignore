@@ -3,3 +3,4 @@ node_modules/
 .env
 kayitlar/
 *.tmp.png
+*.mp4

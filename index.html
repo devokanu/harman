@@ -1,50 +1,11 @@
-<!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TikTok LIVE Kılavuzu · Yerel Belge Seti</title>
-<link rel="stylesheet" href="site.css">
-</head>
-<body>
-<div class="wrap" style="grid-template-columns:1fr">
-<main>
-<header class="stage">
-<div class="eyebrow">Yerel belge seti · 6 Kasım 2026 · tarayıcıda çift tıkla açılır</div>
-<h1>TikTok LIVE'da izleyicinin ekrana dokunduğu yayınlar</h1>
-<p>Bu klasör tek başına çalışır: internet gerekmez, hiçbir şey yüklenmez. Hiç yayın açmamış biriyle yan yana oturup <b>Adım Adım Uygulama</b> sayfasını takip edin; her adımda ne yapılacağı, ekranda ne görüleceği ve takılınca ne olacağı yazıyor. Araştırma belgeleri ve çalışan prototip de aynı klasörde.</p>
-</header>
-
-<div class="hub">
-<a href="adimlar.html"><span class="k">Buradan başla</span><b>Adım Adım Uygulama</b><span>17 bölüm: hesap ve izin, LIVE Studio kurulumu, oyunu bağlama, sahne, prova, ilk yayın dakika dakika, sonrası, format seçimi, kendi sahnen (prototip), OBS alternatifi, kurallar, 30 günlük plan, sorun giderme, sözlük.</span></a>
-<a href="belgeler/kilavuz.html"><span class="k">Tek kaynak</span><b>Sıfırdan LIVE Kılavuzu</b><span>Üç araştırma belgesinin sade dilli birleşimi: sözlük, para, dört yayın ailesi, 37 fikir + halay formülüyle 38 yeni format (Türkiye 20, ülke ülke 18), her fikir için sıfırdan yayına 10 adım, satıcılar, kurallar, takvim, pilot. Büyük punto, koyu tema.</span></a>
-<a href="belgeler/bugun.html"><span class="k">3 saatlik plan</span><b>Bugün Yayın Aç</b><span>Saatli altı durak; ilk yayın için konuşma cümleleri ve makul sayılar.</span></a>
-<a href="belgeler/rehber.html"><span class="k">Yorumla katıl türü</span><b>Katılımlı Yayın Rehberi</b><span>Horon yayını çözümlemesi, satıcılar, 20 fikir, 21 sahnenin yapım notları, kendi kodun, kurallar.</span></a>
-<a href="belgeler/atlas.html"><span class="k">Derin araştırma</span><b>Hediye Tetikli Yayın Atlası</b><span>34 konu, format aileleri ve gerçek örnekler, 17 konsept şartnamesi, ekonomi, OBS kurulumu, 177 kanıt görseli (13,6 MB; açılması birkaç saniye sürer).</span></a>
-<a href="prototip/katil.html?sahne=halka&demo=1"><span class="k">Çalışan prototip</span><b>Katıl: 21 sahne</b><span>Tarayıcıda açılır, sahte izleyicilerle çalışır. Köşeli parantez tuşlarıyla sahne değiştir. Gerçek yayın için <code>prototip/server.js</code> ve Adım Adım bölüm 10.</span></a>
-</div>
-
-<section>
-<div class="num">KLASÖR</div><h2>İçerik</h2>
-<div class="tw"><table>
-<tr><th>Dosya</th><th>Ne</th></tr>
-<tr><td><code>index.html</code></td><td>Bu sayfa</td></tr>
-<tr><td><code>adimlar.html</code></td><td>Adım adım uygulama kılavuzu (ana belge)</td></tr>
-<tr><td><code>belgeler/kilavuz.html</code> · <code>bugun.html</code> · <code>rehber.html</code> · <code>atlas.html</code></td><td>Dört araştırma ve plan belgesi, tek dosya hâlinde (görseller gömülü)</td></tr>
-<tr><td><code>prototip/katil.html</code></td><td>21 sahneli yorumla-katıl prototipi (tek dosya, kütüphane yok)</td></tr>
-<tr><td><code>prototip/halka.html</code></td><td>Tek sahneli ilk sürüm</td></tr>
-<tr><td><code>prototip/server.js</code></td><td>TikTok olaylarını prototipe taşıyan köprü (Node 20+)</td></tr>
-<tr><td><code>prototip/bar.html</code></td><td>Versus Arena bar overlay'i (Atlas)</td></tr>
-<tr><td><code>prototip/anons/anons.html</code></td><td>Radyo Anons sahnesi: sıfırdan, animasyon ve sesleriyle (Kılavuz 05f); <code>?demo=1</code></td></tr>
-<tr><td><code>prototip/cigkofte/cigkofte.html</code></td><td>Çiğ Köfte Yoğurma sahnesi: tamamen vektör, ikonik replikler (Kılavuz 05g); <code>?demo=1</code></td></tr>
-<tr><td><code>prototip/ai/</code></td><td>AI karakter (Robi) için beyin, ses, filtre, köprü örnekleri ve <code>ISTEM.md</code> (Claude Code istemi); <code>node ai/test.js</code> anahtarsız çalışır</td></tr>
-<tr><td><code>img/</code></td><td>Kanıt ve ekran görüntüleri: resmî sayfalar, satıcı sayfaları, OBS Mac ekranları, 21 sahne kareleri</td></tr>
-</table></div>
-<p class="small">Kaynak dosyalar ve araştırma notları ana projede: <code>web3/</code>, <code>web4/</code>, <code>research_notes/</code>, <code>evidence2–4/</code>. Bu klasör bunların taşınabilir kopyasıdır; başka bir bilgisayara aynen kopyalanabilir.</p>
-</section>
-</main>
-<script>(function(){var links=[].slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));if(!links.length||!('IntersectionObserver' in window))return;var map={};links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a});var cur=null;var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id;if(map[id]){if(cur)cur.classList.remove('on');cur=map[id];cur.classList.add('on');}}})},{rootMargin:'-20% 0px -70% 0px'});document.querySelectorAll('section[id],div.stop[id]').forEach(function(s){io.observe(s)});})();</script>
-</div>
-<script src="mobil.js"></script>
-</body>
-</html>
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>TikTok LIVE Kılavuzu · Giriş</title>
+<style>:root{--bg:#0e1116;--bg2:#161a21;--fg:#eceae4;--fg2:#aab0b9;--line:#2a303a;--accent:#f2b25a}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font:18px/1.6 -apple-system,system-ui,"Segoe UI",sans-serif}main{min-height:100vh;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-left,0px)) 24px max(16px,env(safe-area-inset-right,0px))}.k{width:100%;max-width:420px;background:var(--bg2);border:1px solid var(--line);border-radius:24px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.4)}h1{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}p{color:var(--fg2);margin:0 0 18px;font-size:16px}input{width:100%;box-sizing:border-box;font:700 34px/1 ui-monospace,Menlo,monospace;letter-spacing:.35em;text-align:center;padding:16px 10px;border-radius:14px;border:2px solid var(--line);background:#0b0e13;color:var(--fg);outline:none}input:focus{border-color:var(--accent)}button{width:100%;margin-top:14px;min-height:52px;font:700 18px system-ui,sans-serif;border:0;border-radius:14px;background:var(--accent);color:#1a1a1a;cursor:pointer}.hata{color:#ff8a80;min-height:24px;margin-top:10px;font-size:15px}.k.sars{animation:s .35s}@keyframes s{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}small{display:block;margin-top:14px;color:var(--fg2);font-size:13px}</style></head>
+<body><main><form class="k" id="f" autocomplete="off"><h1>TikTok LIVE Kılavuzu</h1><p>Altı haneli parolayı gir.</p><input id="p" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" autofocus><button type="submit">Aç</button><div class="hata" id="h"></div><small>Yerel belge seti: Atlas, Rehber, Kılavuz, Bugün Yayın Aç, prototipler.</small></form></main>
+<script>
+async function oz(t){const b=new TextEncoder().encode("kilavuz-"+t);const d=await crypto.subtle.digest("SHA-256",b);return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,10);}
+const f=document.getElementById("f"),p=document.getElementById("p"),h=document.getElementById("h");
+try{const k=sessionStorage.getItem("kilavuz_slug");if(k)location.replace("s/"+k+"/index.html");}catch(e){}
+f.addEventListener("submit",async e=>{e.preventDefault();const v=p.value.trim();if(!/^\d{6}$/.test(v)){h.textContent="Altı rakam gir.";return;}const s=await oz(v);
+ try{const r=await fetch("s/"+s+"/index.html",{method:"HEAD"});if(!r.ok)throw 0;try{sessionStorage.setItem("kilavuz_slug",s);}catch(_){}location.href="s/"+s+"/index.html";}
+ catch(_){h.textContent="Parola yanlış.";f.classList.remove("sars");void f.offsetWidth;f.classList.add("sars");p.select();}});
+</script></body></html>
